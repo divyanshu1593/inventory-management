@@ -1,6 +1,7 @@
 import { UUID } from 'crypto';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -25,4 +26,7 @@ export class ProductSale {
 
   @Column()
   total_cost: number;
+
+  @CreateDateColumn()
+  date: Date;
 }

@@ -1,6 +1,5 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { AllEntities } from '.';
 
 @Global()
@@ -8,6 +7,4 @@ import { AllEntities } from '.';
   imports: [TypeOrmModule.forFeature(AllEntities)],
   exports: [TypeOrmModule.forFeature(AllEntities)],
 })
-export class DatabaseModule {
-  constructor(private readonly dataSource: DataSource) {}
-}
+export class DatabaseModule {}

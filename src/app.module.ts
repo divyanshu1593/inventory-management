@@ -6,6 +6,7 @@ import { AllEntities } from './database';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/config.env';
 import { AppConfigService } from './config/config.service';
+import { ManufacturingModule } from './manufacturing/manufacturing.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AppConfigService } from './config/config.service';
       entities: AllEntities,
       synchronize: true,
     }),
+    ManufacturingModule,
   ],
   controllers: [AppController],
   // TODO: check re-exporting of AppConfigService

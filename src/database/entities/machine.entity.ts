@@ -13,7 +13,7 @@ export class Machine {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @ManyToMany(() => RawMaterial, (raw_material) => raw_material.consumed_by)

@@ -1,24 +1,31 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
+const IsNotEmptyString = () => (target: any, propertyKey: string | symbol) => {
+  IsNotEmpty()(target, propertyKey);
+  IsString()(target, propertyKey);
+};
 
 export class CreateSalesDto {
   // @IsString()
   // product: CreateProductDto;
 
-  @IsString()
+  @IsNotEmptyString()
   model: string;
 
-  @IsString()
+  @IsNotEmptyString()
   name: string;
 
-  @IsString()
+  @IsNotEmptyString()
   variant: string;
 
   @IsNumber()
+  @IsNotEmpty()
   count: number;
 
-  @IsString()
+  @IsNotEmptyString()
   to: string;
 
   @IsNumber()
+  @IsNotEmpty()
   total_cost: number;
 }

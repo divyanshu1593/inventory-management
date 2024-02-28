@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSalesDto } from './dto/create-sales.dto';
-import type { ProductSale } from 'src/database/entities/product-sale.entity';
 
 @Controller('sales')
 export class SalesController {
@@ -13,21 +12,17 @@ export class SalesController {
   }
 
   @Get()
-  getSales(): Promise<{ data: ProductSale[] }> {
+  getSales() {
     return this.salesService.getSales();
   }
 
-  @Get('byId')
-  getSalesById(
-    @Query('productId') productId: string,
-  ): Promise<{ data: ProductSale[] }> {
+  @Get('id/:id')
+  getSalesById(@Param('id') productId) {
     return this.salesService.getSalesById(productId);
   }
 
-  @Get('byTotalCost')
-  getSalesByTotalCost(
-    @Query('totalCost') totalCost: number,
-  ): Promise<{ data: ProductSale[] }> {
+  @Get('totalcost/:totalCost')
+  getSalesByTotalCost(@Param('totalCost') totalCost) {
     return this.salesService.getSalesByTotalCost(totalCost);
   }
 }

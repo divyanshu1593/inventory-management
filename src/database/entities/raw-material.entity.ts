@@ -7,7 +7,7 @@ export class RawMaterial {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column()

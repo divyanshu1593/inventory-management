@@ -1,16 +1,20 @@
-import { plainToInstance } from 'class-transformer';
-import { IsInt, Max, Min, validateSync } from 'class-validator';
+import { Transform, plainToInstance } from 'class-transformer';
+import { IsBoolean, IsInt, Max, Min, validateSync } from 'class-validator';
 
 export class Env {
   @IsInt()
   @Min(0)
   @Max(65535)
+  @Transform(({ value }) => parseInt(value))
   PORT: number = 3000;
+
+  @IsBoolean()
+  @Transform(({ value }) => value.toString().toLowerCase() === 'true')
+  SEED: boolean = false;
 }
 
 export const validate = (env: Record<string, unknown>) => {
   const transformed = plainToInstance(Env, env, {
-    enableImplicitConversion: true,
     exposeDefaultValues: true,
   });
   const errors = validateSync(transformed);

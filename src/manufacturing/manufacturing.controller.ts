@@ -8,12 +8,14 @@ export class ManufacturingController {
   constructor(private readonly manufacturingService: ManufacturingService) {}
 
   @Post('manufacture-product')
-  manufactureProduct(@Body() manufactureProductDto: ManufactureProductDto) {
-    this.manufacturingService.manufactureProduct(manufactureProductDto);
+  async manufactureProduct(
+    @Body() manufactureProductDto: ManufactureProductDto,
+  ) {
+    await this.manufacturingService.manufactureProduct(manufactureProductDto);
   }
 
   @Post('add-new-product')
-  addProduct(@Body() productInfo: ProductDto) {
-    this.manufacturingService.addProduct(productInfo);
+  async addProduct(@Body() productInfo: ProductDto) {
+    await this.manufacturingService.addProduct(productInfo);
   }
 }

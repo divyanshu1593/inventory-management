@@ -7,6 +7,7 @@ import { MachineSeeder } from './entity-seeders/machine.seeder';
 import { ProductSaleSeeder } from './entity-seeders/product-sale.seeder';
 import { RawMaterialImportSeeder } from './entity-seeders/raw-material-import.seeder';
 import { ProductionBatchSeeder } from './entity-seeders/production-batch.seeder';
+import { MachineConsumptionSeeder } from './entity-seeders/machine-consumption.seeder';
 
 @Module({
   providers: [
@@ -18,7 +19,7 @@ import { ProductionBatchSeeder } from './entity-seeders/production-batch.seeder'
     ProductSaleSeeder,
     RawMaterialImportSeeder,
     ProductionBatchSeeder,
-    //
+    MachineConsumptionSeeder,
   ],
   exports: [DatabaseSeeder],
 })

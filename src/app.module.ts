@@ -27,10 +27,12 @@ import { DatabaseSeeder } from './database-seeder/database-seeder.service';
   providers: [AppService, AppConfigService],
 })
 export class AppModule implements OnApplicationBootstrap {
-  constructor(private readonly seeder: DatabaseSeeder) {}
+  constructor(
+    private readonly seeder: DatabaseSeeder,
+    private readonly config: AppConfigService,
+  ) {}
   async onApplicationBootstrap() {
     // seed everything on app start
-    // TODO: add and env variable to conditionally seed
-    await this.seeder.seedAll();
+    if (this.config.get('SEED')) await this.seeder.seedAll();
   }
 }

@@ -1,4 +1,4 @@
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
+import { Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,12 +27,19 @@ import { DatabaseSeeder } from './database-seeder/database-seeder.service';
   providers: [AppService, AppConfigService],
 })
 export class AppModule implements OnApplicationBootstrap {
+  private readonly logger = new Logger(AppModule.name);
+
   constructor(
     private readonly seeder: DatabaseSeeder,
     private readonly config: AppConfigService,
   ) {}
+
   async onApplicationBootstrap() {
     // seed everything on app start
-    if (this.config.get('SEED')) await this.seeder.seedAll();
+    if (this.config.get('SEED')) {
+      this.logger.log('Seeding Started');
+      await this.seeder.seedAll();
+      this.logger.log('Seeding Complete');
+    }
   }
 }

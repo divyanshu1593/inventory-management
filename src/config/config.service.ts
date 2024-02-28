@@ -6,7 +6,7 @@ import { Env } from './config.env';
 export class AppConfigService {
   constructor(private readonly configService: ConfigService<Env>) {}
 
-  get(key: keyof Env) {
+  get<T extends keyof Env>(key: T) {
     return this.configService.getOrThrow(key, { infer: true });
   }
 }

@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UUID } from 'crypto';
 import { RawMaterial } from './raw-material.entity';
 
@@ -13,7 +19,7 @@ export class RawMaterialImport {
   @Column()
   count: number;
 
-  @Column()
+  @CreateDateColumn()
   date: Date;
 
   @Column()

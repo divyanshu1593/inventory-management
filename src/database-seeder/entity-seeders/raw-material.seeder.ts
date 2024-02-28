@@ -13,11 +13,13 @@ export class RawMaterialSeeder extends BaseSeeder<RawMaterial> {
   ) {
     super(rawMaterialRepo);
   }
-  generate(index: number): DeepPartial<RawMaterial> {
-    return {
-      amount: SeedUtils.randomIntFromInterval(10, 100) * 1000,
-      cost: SeedUtils.randomIntFromInterval(1, 10) * 1000,
-      name: `raw_material_${index}`,
-    };
+  async generate(index: number): Promise<DeepPartial<RawMaterial>[]> {
+    return [
+      {
+        amount: SeedUtils.randomIntFromInterval(10, 100) * 1000,
+        cost: SeedUtils.randomIntFromInterval(1, 10) * 1000,
+        name: `raw_material_${index}`,
+      },
+    ];
   }
 }

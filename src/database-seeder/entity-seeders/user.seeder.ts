@@ -15,14 +15,15 @@ export class UserSeeder extends BaseSeeder<User> {
     super(userRepo);
   }
 
-  generate(index: number): DeepPartial<User> {
+  async generate(index: number): Promise<DeepPartial<User>[]> {
     const role = SeedUtils.randomEnum(UserRole);
-    console.log(role);
-    return {
-      address: `address_${index}`,
-      email: `email_${index}@example.com`,
-      name: `name_${index}`,
-      role: role,
-    };
+    return [
+      {
+        address: `address_${index}`,
+        email: `email_${index}@example.com`,
+        name: `name_${index}`,
+        role: role,
+      },
+    ];
   }
 }

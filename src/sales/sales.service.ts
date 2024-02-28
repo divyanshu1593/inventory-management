@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSalesDto } from './dto/create-sales.dto';
 import type { Repository } from 'typeorm';
-import { ProductSale } from 'src/database/entities/product-sale.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/database/entities/product.entity';
 import type { CreateProductDto } from './dto/create-product.dto';
+import { ProductSale } from 'src/database/entities/product-sale.entity';
 
 @Injectable()
 export class SalesService {
@@ -16,22 +16,47 @@ export class SalesService {
   ) {}
 
   async craeteProduct(craeteProductDto: CreateProductDto) {
-    const product = this.productRepo.create(craeteProductDto);
-    return await this.productRepo.save(product);
+    try {
+      await this.productRepo
+        .createQueryBuilder()
+        .insert()
+        .into(Product)
+        .values(craeteProductDto)
+        .execute();
+      return { message: 'product added successfully' };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async createSales(createSalesDto: CreateSalesDto) {
     const { model, name, variant, count, to } = createSalesDto;
-    const product = await this.productRepo.findOne({
-      where: { model, name, variant },
-    });
 
-    const sale = this.salesRepo.create({
-      product: product,
-      count,
-      to,
-      total_cost: product.price * count,
-    });
-    return await this.salesRepo.save(sale);
+    //get product
+    try {
+      const product = await this.productRepo
+        .createQueryBuilder('product')
+        .where(
+          'product.name = :name AND product.model=:model AND product.variant = :variant',
+          { name, model, variant },
+        )
+        .getOneOrFail();
+
+      //create sale
+      await this.salesRepo
+        .createQueryBuilder()
+        .insert()
+        .into(ProductSale)
+        .values({
+          product: product,
+          count,
+          to,
+          total_cost: product.price * count,
+        })
+        .execute();
+      return { message: 'sale added successfully' };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

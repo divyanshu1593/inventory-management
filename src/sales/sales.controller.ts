@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSalesDto } from './dto/create-sales.dto';
-import type { CreateProductDto } from './dto/create-product.dto';
+import type { ProductSale } from 'src/database/entities/product-sale.entity';
 
 @Controller('sales')
 export class SalesController {
@@ -9,15 +9,25 @@ export class SalesController {
 
   @Post()
   createSales(@Body() createSalesDto: CreateSalesDto) {
-    return this.salesService.createSales(createSalesDto);
+    return this.salesService.createSale(createSalesDto);
   }
 
-  @Post('addProduct')
-  createProduct(@Body() createProductDto: CreateProductDto) {
-    return this.salesService.craeteProduct(createProductDto);
-  }
   @Get()
-  getSalesRecords() {
-    return 'Hello world';
+  getSales(): Promise<{ data: ProductSale[] }> {
+    return this.salesService.getSales();
+  }
+
+  @Get('byId')
+  getSalesById(
+    @Query('productId') productId: string,
+  ): Promise<{ data: ProductSale[] }> {
+    return this.salesService.getSalesById(productId);
+  }
+
+  @Get('byTotalCost')
+  getSalesByTotalCost(
+    @Query('totalCost') totalCost: number,
+  ): Promise<{ data: ProductSale[] }> {
+    return this.salesService.getSalesByTotalCost(totalCost);
   }
 }

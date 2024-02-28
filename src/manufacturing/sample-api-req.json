@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "ac26de68-29b9-48ca-95ce-e2bbec426885",
+		"name": "Inventory Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29169046"
+	},
+	"item": [
+		{
+			"name": "add product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "smart phone",
+							"type": "text"
+						},
+						{
+							"key": "model",
+							"value": "f24",
+							"type": "text"
+						},
+						{
+							"key": "variant",
+							"value": "128 gb",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "100000",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "mobile_and_accessories",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/manufacturing/add-new-product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"manufacturing",
+						"add-new-product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "manufacture product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "productName",
+							"value": "smart phone",
+							"type": "text"
+						},
+						{
+							"key": "productModel",
+							"value": "f24",
+							"type": "text"
+						},
+						{
+							"key": "productVariant",
+							"value": "128gb",
+							"type": "text"
+						},
+						{
+							"key": "machineName",
+							"value": "machine1",
+							"type": "text"
+						},
+						{
+							"key": "rawMaterialQuantityArray",
+							"value": "[{\"rawMaterialName\":\"wood\",\"amount\":10},{\"rawMaterialName\":\"metal\",\"amount\":20}]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/manufacturing/manufacture-product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"manufacturing",
+						"manufacture-product"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

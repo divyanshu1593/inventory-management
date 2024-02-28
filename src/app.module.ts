@@ -9,6 +9,7 @@ import { AppConfigService } from './config/config.service';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseSeedingModule } from './database-seeder/database-seeder.module';
 import { DatabaseSeeder } from './database-seeder/database-seeder.service';
+import { ManufacturingModule } from './manufacturing/manufacturing.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DatabaseSeeder } from './database-seeder/database-seeder.service';
     }),
     DatabaseModule,
     DatabaseSeedingModule,
+    ManufacturingModule,
   ],
   controllers: [AppController],
   // TODO: check re-exporting of AppConfigService

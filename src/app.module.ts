@@ -10,6 +10,7 @@ import { DatabaseModule } from './database/database.module';
 import { DatabaseSeedingModule } from './database-seeder/database-seeder.module';
 import { DatabaseSeeder } from './database-seeder/database-seeder.service';
 import { ManufacturingModule } from './manufacturing/manufacturing.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ManufacturingModule } from './manufacturing/manufacturing.module';
     DatabaseModule,
     DatabaseSeedingModule,
     ManufacturingModule,
+    AuthModule,
   ],
   controllers: [AppController],
   // TODO: check re-exporting of AppConfigService

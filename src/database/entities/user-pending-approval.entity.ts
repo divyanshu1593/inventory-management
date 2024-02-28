@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from './user.roles';
 
 @Entity()
-export class User {
+export class UserPendingApproval {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 

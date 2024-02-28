@@ -11,8 +11,38 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "smart phone",
+							"type": "text"
+						},
+						{
+							"key": "model",
+							"value": "f24",
+							"type": "text"
+						},
+						{
+							"key": "variant",
+							"value": "128 gb",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "100000",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "mobile_and_accessories",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "http://localhost:3000/manufacturing/add-product",
+					"raw": "http://localhost:3000/manufacturing/add-new-product",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -20,7 +50,7 @@
 					"port": "3000",
 					"path": [
 						"manufacturing",
-						"add-product"
+						"add-new-product"
 					]
 				}
 			},
@@ -36,7 +66,7 @@
 					"urlencoded": [
 						{
 							"key": "productName",
-							"value": "phone",
+							"value": "smart phone",
 							"type": "text"
 						},
 						{
@@ -56,7 +86,7 @@
 						},
 						{
 							"key": "rawMaterialQuantityArray",
-							"value": "[{\"rawMaterialName\":\"water\",\"amount\":12}]",
+							"value": "[{\"rawMaterialName\":\"wood\",\"amount\":10},{\"rawMaterialName\":\"metal\",\"amount\":20}]",
 							"type": "text"
 						}
 					]

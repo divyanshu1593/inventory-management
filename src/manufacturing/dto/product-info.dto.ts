@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { IsEnum, IsNumber, Min } from 'class-validator';
 import { ProductCategory } from 'src/database/entities/product.category';
+import { IsNotEmptyString } from '../custom-decorators/is-not-empty-string.decorator';
 
 export class ProductDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   name: string;
 
   @Transform(({ value }) => +value)
@@ -15,11 +15,9 @@ export class ProductDto {
   @IsEnum(ProductCategory)
   category: ProductCategory;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   model: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   variant: string;
 }

@@ -24,27 +24,27 @@ export class ManufacturingService {
     } = manufactureProductDto;
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
-      const rawMaterialMap = new Map();
-      for (const rawMaterialQuantity of rawMaterialQuantityArray) {
-        if (rawMaterialMap.has(rawMaterialQuantity.rawMaterialName)) {
-          throw new NotAcceptableException(
-            'multiple raw material entry present in rawMaterialQuantityArray',
-          );
-        }
+      const rawMaterialSet = new Set(
+        rawMaterialQuantityArray.map((val) => val.rawMaterialName),
+      );
 
-        rawMaterialMap.set(rawMaterialQuantity.rawMaterialName, 1);
+      if (rawMaterialSet.size !== rawMaterialQuantityArray.length) {
+        throw new NotAcceptableException(
+          'multiple raw material entry present in rawMaterialQuantityArray',
+        );
       }
 
-      const canConsume = await transactionalEntityManager
-        .createQueryBuilder(Machine, 'machine')
-        .innerJoinAndSelect('machine.consumes', 'raw_material')
-        .select('raw_material.name')
-        .where('machine.name = :machineName', { machineName })
-        .getRawMany();
+      const canConsume: { raw_material_name: string }[] =
+        await transactionalEntityManager
+          .createQueryBuilder(Machine, 'machine')
+          .innerJoinAndSelect('machine.consumes', 'raw_material')
+          .select('raw_material.name')
+          .where('machine.name = :machineName', { machineName })
+          .getRawMany();
 
       let itemMatchCnt = 0;
       for (const rawMaterial of canConsume) {
-        if (rawMaterialMap.has(rawMaterial.raw_material_name)) {
+        if (rawMaterialSet.has(rawMaterial.raw_material_name)) {
           itemMatchCnt++;
         }
       }
@@ -89,14 +89,8 @@ export class ManufacturingService {
   }
 
   async addProduct(productInfo: ProductDto): Promise<void> {
-    const { name, price, category, model, variant } = productInfo;
-
     await this.dataSource.manager.insert(Product, {
-      name,
-      price,
-      category,
-      model,
-      variant,
+      ...productInfo,
       amount: 0,
     });
   }

@@ -1,50 +1,25 @@
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsNotEmpty,
-  IsString,
-  Validate,
-  ValidatorConstraint,
-} from 'class-validator';
-import { RawMaterialQuantity } from '../type/raw-material-quantity.type';
-import { Transform } from 'class-transformer';
-
-@ValidatorConstraint()
-class IsRawMaterialQuantityArray {
-  validate(rawMaterialQuantityArray: RawMaterialQuantity[]) {
-    for (const rawMaterialQuantity of rawMaterialQuantityArray) {
-      if (typeof rawMaterialQuantity.amount !== 'number') return false;
-      if (rawMaterialQuantity.amount < 0) return false;
-      if (typeof rawMaterialQuantity.rawMaterialName !== 'string') return false;
-      if (rawMaterialQuantity.rawMaterialName === '') return false;
-    }
-
-    return true;
-  }
-}
+import { ArrayNotEmpty, IsArray, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { RawMaterialQuantityDto } from './raw-material-quantity.dto';
+import { IsNotEmptyString } from '../custom-decorators/is-not-empty-string.decorator';
 
 export class ManufactureProductDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   productName: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   productModel: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   productVariant: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmptyString()
   machineName: string;
 
   @Transform(({ value }) => JSON.parse(value))
   @IsArray()
   @ArrayNotEmpty()
-  @Validate(IsRawMaterialQuantityArray, {
-    message: 'invalid raw material object',
-  })
-  rawMaterialQuantityArray: RawMaterialQuantity[];
+  @ValidateNested()
+  @Type(() => RawMaterialQuantityDto)
+  rawMaterialQuantityArray: RawMaterialQuantityDto[];
 }

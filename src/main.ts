@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/config.service';
 import { ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { GlobalApiTransformApiInterceptor } from './interceptor/global-api-transfrom.interceptor';
+import { HttpExceptionTransformFilter } from './filters/failure-transformer.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +14,10 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   const port = configService.get('PORT');
+
+  // Response Transformers
+  app.useGlobalFilters(new HttpExceptionTransformFilter());
+  app.useGlobalInterceptors(new GlobalApiTransformApiInterceptor());
 
   await app.listen(port);
 }

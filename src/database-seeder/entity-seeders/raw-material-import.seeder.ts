@@ -25,7 +25,6 @@ export class RawMaterialImportSeeder extends BaseSeeder<RawMaterialImport> {
     return [
       {
         count: count,
-        date: new Date(),
         raw_material: rawMaterial,
         total_cost: count * rawMaterial.cost,
       },

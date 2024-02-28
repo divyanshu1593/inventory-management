@@ -24,7 +24,6 @@ export class ProductSaleSeeder extends BaseSeeder<ProductSale> {
     return [
       {
         count: count,
-        date: new Date(),
         product: product,
         total_cost: product.price * count,
         to: `sale_to_${index}`,

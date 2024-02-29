@@ -17,7 +17,7 @@ export class RawMaterialImportSeeder extends BaseSeeder<RawMaterialImport> {
   ) {
     super(rawMaterialImportRepo);
   }
-  async generate(index: number): Promise<DeepPartial<RawMaterialImport>[]> {
+  async generate(_index: number): Promise<DeepPartial<RawMaterialImport>[]> {
     const count = SeedUtils.randomIntFromInterval(1, 10) * 1000;
     const rawMaterial = await SeedUtils.getRandomEntryFromRepo(
       this.rawMaterialRepo,

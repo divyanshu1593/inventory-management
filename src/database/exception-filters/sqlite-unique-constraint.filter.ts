@@ -12,7 +12,7 @@ export interface ErrorHandler {
 export class TypeORMErrorFilter extends AbstractErrorInterceptor<QueryFailedError> {
   protected interceptedType = QueryFailedError;
 
-  handleError(exception: TypeORMError) {
+  handleError(exception: TypeORMError): never {
     const handlerFound = AllSqliteHandlers.find((h) =>
       h.canHandle(exception.message),
     );

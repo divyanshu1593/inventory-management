@@ -1,11 +1,16 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  HttpException,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable, catchError } from 'rxjs';
 
 export abstract class AbstractErrorInterceptor<T> implements NestInterceptor {
   intercept(
     context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+    next: CallHandler<unknown>,
+  ): Observable<unknown> | Promise<Observable<unknown>> {
     return next.handle().pipe(
       catchError((exception) => {
         if (exception instanceof this.interceptedType) {
@@ -15,7 +20,7 @@ export abstract class AbstractErrorInterceptor<T> implements NestInterceptor {
       }),
     );
   }
-  protected interceptedType: new (...args) => T;
+  protected interceptedType: new (...args: unknown[]) => T;
 
-  abstract handleError(exception: T);
+  abstract handleError(exception: T): HttpException;
 }

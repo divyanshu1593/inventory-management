@@ -18,7 +18,7 @@ export class ProductionBatchSeeder extends BaseSeeder<ProductionBatch> {
     super(productionBatchRepo);
   }
 
-  async generate(index: number): Promise<DeepPartial<ProductionBatch>[]> {
+  async generate(_index: number): Promise<DeepPartial<ProductionBatch>[]> {
     return [
       {
         product: await SeedUtils.getRandomEntryFromRepo(this.productRepo),

@@ -1,9 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-
-const IsNotEmptyString = () => (target: any, propertyKey: string | symbol) => {
-  IsNotEmpty()(target, propertyKey);
-  IsString()(target, propertyKey);
-};
+import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
 export class CreateSalesDto {
   // @IsString()

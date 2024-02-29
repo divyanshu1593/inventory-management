@@ -1,5 +1,5 @@
 import { IsNumber, Min } from 'class-validator';
-import { IsNotEmptyString } from '../custom-decorators/is-not-empty-string.decorator';
+import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
 export class RawMaterialQuantityDto {
   @IsNotEmptyString()

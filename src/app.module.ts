@@ -6,6 +6,7 @@ import { AllEntities } from './database';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/config.env';
 import { AppConfigService } from './config/config.service';
+import { SalesModule } from './sales/sales.module';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseSeedingModule } from './database-seeder/database-seeder.module';
 import { DatabaseSeeder } from './database-seeder/database-seeder.service';
@@ -20,6 +21,7 @@ import { ManufacturingModule } from './manufacturing/manufacturing.module';
       entities: AllEntities,
       synchronize: true,
     }),
+    SalesModule,
     DatabaseModule,
     DatabaseSeedingModule,
     ManufacturingModule,

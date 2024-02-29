@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNumber, Min } from 'class-validator';
 import { ProductCategory } from 'src/database/entities/product.category';
-import { IsNotEmptyString } from '../custom-decorators/is-not-empty-string.decorator';
+import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
 export class ProductDto {
   @IsNotEmptyString()

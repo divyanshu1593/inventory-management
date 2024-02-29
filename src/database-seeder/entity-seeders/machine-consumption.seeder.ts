@@ -22,7 +22,7 @@ export class MachineConsumptionSeeder extends BaseSeeder<MachineConsumption> {
     super(machineConsumptionRepo);
   }
 
-  async generate(index: number): Promise<DeepPartial<MachineConsumption>[]> {
+  async generate(_index: number): Promise<DeepPartial<MachineConsumption>[]> {
     const batch = await SeedUtils.getRandomEntryFromRepo(this.batchRepo);
     const machine = await SeedUtils.getRandomEntryFromRepo(this.machineRepo, {
       relations: { consumes: true },

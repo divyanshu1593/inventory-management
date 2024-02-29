@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSalesDto } from './dto/create-sales.dto';
+import { UUID } from 'crypto';
 
 @Controller('sales')
 export class SalesController {
@@ -17,12 +18,12 @@ export class SalesController {
   }
 
   @Get('id/:id')
-  getSalesById(@Param('id') productId) {
+  getSalesById(@Param('id') productId: UUID) {
     return this.salesService.getSalesById(productId);
   }
 
   @Get('totalcost/:totalCost')
-  getSalesByTotalCost(@Param('totalCost') totalCost) {
+  getSalesByTotalCost(@Param('totalCost') totalCost: number) {
     return this.salesService.getSalesByTotalCost(totalCost);
   }
 }

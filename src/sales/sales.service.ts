@@ -28,12 +28,12 @@ export class SalesService {
     });
 
     //create sale
-    // TODO: calculate cost automatically when not given by user
+    const countedCost = total_cost ?? product.price * count;
     const sale = this.salesRepo.create({
       product: product,
       count,
       to,
-      total_cost,
+      total_cost: countedCost,
     });
     return await this.salesRepo.save(sale);
   }

@@ -29,8 +29,9 @@ export class AuthController {
   @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
   @Get('signup/get-approvable-requests')
   async getApprovableRequests(@Req() req: Request) {
-    return await this.authService.getApprovalbleRequests(
-      req.user.jwtPayload.role,
+    return await this.authService.getApprovableRequests(
+      req.user.role,
+      req.user.department,
     );
   }
 
@@ -41,7 +42,7 @@ export class AuthController {
     @Body() userEmailArray: userEmailArrayDto,
   ) {
     return await this.authService.approveRequests(
-      req.user.jwtPayload.role,
+      req.user.role,
       userEmailArray.emails,
     );
   }
@@ -53,6 +54,7 @@ export class AuthController {
     return this.authService.login({
       id: req.user.id,
       role: req.user.role,
+      department: req.user.department,
     });
   }
 }

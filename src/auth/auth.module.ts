@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppConfigService } from 'src/config/config.service';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { AuthorityMap } from './authority-maping';
 
 @Module({
   imports: [
@@ -19,6 +18,6 @@ import { AuthorityMap } from './authority-maping';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, AuthorityMap],
+  providers: [AuthService, JwtStrategy, LocalStrategy],
 })
 export class AuthModule {}

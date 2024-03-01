@@ -6,8 +6,8 @@ import { UserPendingApproval } from 'src/database/entities/user-pending-approval
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.roles';
-import { AuthorityMap } from './authority-maping';
 import { User } from 'src/database/entities/user.entity';
+import { AuthorityMap } from './authority-maping';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,6 @@ export class AuthService {
     @InjectRepository(UserPendingApproval)
     private readonly userPendingApprovalRepo: Repository<UserPendingApproval>,
     private readonly dataSource: DataSource,
-    private readonly authorityMap: AuthorityMap,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -31,7 +30,7 @@ export class AuthService {
   }
 
   async getApprovalbleRequests(role: UserRole) {
-    const juniorRole = this.authorityMap.info.get(role);
+    const juniorRole = AuthorityMap.get(role);
     if (juniorRole === null) return [];
 
     // TODO: automate remove passwordHash
@@ -43,7 +42,7 @@ export class AuthService {
   }
 
   async approveRequests(role: UserRole, emails: string[]): Promise<string[]> {
-    const juniorRole = this.authorityMap.info.get(role);
+    const juniorRole = AuthorityMap.get(role);
     const notApprovable: string[] = [];
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {

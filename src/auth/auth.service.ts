@@ -8,6 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.roles';
 import { User } from 'src/database/entities/user.entity';
 import { AuthorityMap } from './authority-maping';
+import { SignableJwtPayload } from './types/jwt-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -80,7 +81,7 @@ export class AuthService {
     return notApprovable;
   }
 
-  login(payload: object) {
+  login(payload: SignableJwtPayload) {
     const token: string = this.jwtService.sign(payload);
 
     return { token };

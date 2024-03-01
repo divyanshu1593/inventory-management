@@ -12,7 +12,6 @@ import { AllowUnauthorized } from 'src/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { AuthService } from './auth.service';
-import { JwtPayload } from './types/jwt-payload.type';
 import { userEmailArrayDto } from './dto/user-email-array.dto';
 import { AllowRoles } from 'src/guards/roles.guard';
 import { UserRole } from 'src/database/entities/user.roles';
@@ -51,10 +50,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @AllowUnauthorized()
   login(@Req() req: Request) {
-    const payload: JwtPayload = {
+    return this.authService.login({
       id: req.user.id,
       role: req.user.role,
-    };
-    return this.authService.login(payload);
+    });
   }
 }

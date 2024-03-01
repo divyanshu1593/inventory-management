@@ -34,9 +34,12 @@ export class AuthService {
     const juniorRole = this.authorityMap.info.get(role);
     if (juniorRole === null) return [];
 
-    return await this.userPendingApprovalRepo.findBy({
+    // TODO: automate remove passwordHash
+    const users = await this.userPendingApprovalRepo.findBy({
       role: juniorRole,
     });
+
+    return users.map(({ passwordHash, ...rest }) => rest);
   }
 
   async approveRequests(role: UserRole, emails: string[]): Promise<string[]> {
@@ -80,7 +83,6 @@ export class AuthService {
 
   login(payload: object) {
     const token: string = this.jwtService.sign(payload);
-    console.log(token);
 
     return { token };
   }

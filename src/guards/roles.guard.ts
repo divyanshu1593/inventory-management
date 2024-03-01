@@ -1,12 +1,10 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
+import { applyDecorators } from '@nestjs/common';
+import { UserRole } from 'src/database/entities/user.roles';
 
-export class RoleGuard implements CanActivate {
-  private roles: string[];
-
-  constructor(...roles: string[]) {
-    this.roles = roles;
-  } //
+class RoleGuard implements CanActivate {
+  constructor(private readonly roles: UserRole[]) {}
   canActivate(context: ExecutionContext): boolean {
     const ctx = context.switchToHttp();
 
@@ -14,4 +12,8 @@ export class RoleGuard implements CanActivate {
 
     return this.roles.includes(request.user.jwtPayload.role);
   }
+}
+
+export function AllowRoles(...roles: UserRole[]) {
+  return applyDecorators(UseGuards(new RoleGuard(roles)));
 }

@@ -14,7 +14,7 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import { AuthService } from './auth.service';
 import { JwtPayload } from './types/jwt-payload.type';
 import { userEmailArrayDto } from './dto/user-email-array.dto';
-import { RoleGuard } from 'src/guards/roles.guard';
+import { AllowRoles } from 'src/guards/roles.guard';
 import { UserRole } from 'src/database/entities/user.roles';
 
 @Controller('auth')
@@ -27,9 +27,7 @@ export class AuthController {
     return await this.authService.addUnapprovedUser(userInfo);
   }
 
-  @UseGuards(
-    new RoleGuard(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER),
-  )
+  @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
   @Get('signup/get-approvable-requests')
   async getApprovableRequests(@Req() req: Request) {
     return await this.authService.getApprovalbleRequests(
@@ -37,9 +35,7 @@ export class AuthController {
     );
   }
 
-  @UseGuards(
-    new RoleGuard(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER),
-  )
+  @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
   @Put('signup/approve-requests')
   async approveRequests(
     @Req() req: Request,

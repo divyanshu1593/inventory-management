@@ -7,37 +7,42 @@ import {
   Get,
   Put,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import { Request } from 'express';
 import { AllowUnauthorized } from 'src/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { AuthService } from './auth.service';
-import { JwtPayload } from './types/jwtPayload.type';
+import { JwtPayload } from './types/jwt-payload.type';
 import { userEmailArrayDto } from './dto/user-email-array.dto';
+import { RoleGuard } from 'src/guards/roles.guard';
+import { UserRole } from 'src/database/entities/user.roles';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @AllowUnauthorized()
   @Post('signup/')
   async addUnapprovedUser(@Body() userInfo: UserSignupDto) {
     return await this.authService.addUnapprovedUser(userInfo);
   }
 
-  // TODO: add appropriate Roles decorator
+  @UseGuards(
+    new RoleGuard(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER),
+  )
   @Get('signup/get-approvable-requests')
-  async getApprovableRequests(
-    @Req() req: Request & { user: { jwtPayload: JwtPayload } },
-  ) {
+  async getApprovableRequests(@Req() req: Request) {
     return await this.authService.getApprovalbleRequests(
       req.user.jwtPayload.role,
     );
   }
 
-  // TODO: add appropriate Roles decorator
+  @UseGuards(
+    new RoleGuard(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER),
+  )
   @Put('signup/approve-requests')
   async approveRequests(
-    @Req() req: Request & { user: { jwtPayload: JwtPayload } },
+    @Req() req: Request,
     @Body() userEmailArray: userEmailArrayDto,
   ) {
     return await this.authService.approveRequests(
@@ -50,7 +55,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @AllowUnauthorized()
   login(@Req() req: Request) {
-    const payload = {
+    const payload: JwtPayload = {
       id: req.user.id,
       role: req.user.role,
     };

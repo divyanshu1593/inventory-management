@@ -2,16 +2,16 @@ import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 
 export class RoleGuard implements CanActivate {
-  private role: string;
+  private roles: string[];
 
-  constructor(role: string) {
-    this.role = role;
+  constructor(...roles: string[]) {
+    this.roles = roles;
   } //
   canActivate(context: ExecutionContext): boolean {
     const ctx = context.switchToHttp();
 
     const request: Request = ctx.getRequest<Request>();
 
-    return this.role == request.user.jwtPayload.role;
+    return this.roles.includes(request.user.jwtPayload.role);
   }
 }

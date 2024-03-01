@@ -11,14 +11,14 @@ import { MachineConsumptionSeeder } from './entity-seeders/machine-consumption.s
 @Injectable()
 export class DatabaseSeeder {
   constructor(
-    private readonly userSeeder: UserSeeder,
-    private readonly rawMaterialSeeder: RawMaterialSeeder,
-    private readonly productSeeder: ProductSeeder,
-    private readonly machineSeeder: MachineSeeder,
-    private readonly productSaleSeeder: ProductSaleSeeder,
-    private readonly rawMaterialImportSeeder: RawMaterialImportSeeder,
-    private readonly productionBatchSeeder: ProductionBatchSeeder,
-    private readonly machineConsumptionSeeder: MachineConsumptionSeeder,
+    readonly userSeeder: UserSeeder,
+    readonly rawMaterialSeeder: RawMaterialSeeder,
+    readonly productSeeder: ProductSeeder,
+    readonly machineSeeder: MachineSeeder,
+    readonly productSaleSeeder: ProductSaleSeeder,
+    readonly rawMaterialImportSeeder: RawMaterialImportSeeder,
+    readonly productionBatchSeeder: ProductionBatchSeeder,
+    readonly machineConsumptionSeeder: MachineConsumptionSeeder,
   ) {}
 
   async seedAll() {

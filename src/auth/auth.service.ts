@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { UserPendingApproval } from 'src/database/entities/user-pending-approval.entity';
@@ -15,6 +16,7 @@ export class AuthService {
     private readonly userPendingApprovalRepo: Repository<UserPendingApproval>,
     private readonly dataSource: DataSource,
     private readonly authorityMap: AuthorityMap,
+    private readonly jwtService: JwtService,
   ) {}
 
   async addUnapprovedUser(userInfo: UserSignupDto) {
@@ -39,7 +41,7 @@ export class AuthService {
 
   async approveRequests(role: UserRole, emails: string[]): Promise<string[]> {
     const juniorRole = this.authorityMap.info.get(role);
-    const notApprovable = [];
+    const notApprovable: string[] = [];
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       for (const userEmail of emails) {
@@ -74,5 +76,12 @@ export class AuthService {
     });
 
     return notApprovable;
+  }
+
+  login(payload: object) {
+    const token: string = this.jwtService.sign(payload);
+    console.log(token);
+
+    return { token };
   }
 }

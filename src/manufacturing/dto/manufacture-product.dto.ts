@@ -1,7 +1,7 @@
 import { ArrayNotEmpty, IsArray, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { RawMaterialQuantityDto } from './raw-material-quantity.dto';
-import { IsNotEmptyString } from '../custom-decorators/is-not-empty-string.decorator';
+import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
 export class ManufactureProductDto {
   @IsNotEmptyString()

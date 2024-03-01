@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Post, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  Get,
+  Put,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { AllowUnauthorized } from 'src/guards/jwt-auth.guard';
+import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { AuthService } from './auth.service';
 import { JwtPayload } from './types/jwtPayload.type';
@@ -33,5 +44,16 @@ export class AuthController {
       req.user.jwtPayload.role,
       userEmailArray.emails,
     );
+  }
+
+  @Post('signin/')
+  @UseGuards(LocalAuthGuard)
+  @AllowUnauthorized()
+  login(@Req() req: Request) {
+    const payload = {
+      id: req.user.id,
+      role: req.user.role,
+    };
+    return this.authService.login(payload);
   }
 }

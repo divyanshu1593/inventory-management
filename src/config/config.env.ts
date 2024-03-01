@@ -1,5 +1,12 @@
 import { Transform, plainToInstance } from 'class-transformer';
-import { IsBoolean, IsInt, Max, Min, validateSync } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsString,
+  Max,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 export class Env {
   @IsInt()
@@ -11,6 +18,9 @@ export class Env {
   @IsBoolean()
   @Transform(({ value }) => value.toString().toLowerCase() === 'true')
   SEED: boolean = false;
+
+  @IsString()
+  JWT_SECRET_KEY: string;
 }
 
 export const validate = (env: Record<string, unknown>) => {

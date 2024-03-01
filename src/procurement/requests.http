@@ -1,0 +1,31 @@
+POST http://localhost:3000/procurement/add-machine
+Content-Type: application/json
+
+{
+  "name":"machine_0",
+  "consumes" : [{"id" : "f2caeb77-df0a-42e0-9bee-a4c722d879a4"}]
+} 
+// Machine already exists
+
+###
+
+POST http://localhost:3000/procurement/add-machine
+Content-Type: application/json
+
+{
+  "name":"machine_doest_exist",
+  "consumes" : [{"id" : "f2caeb77-df0a-42e0-9bee-a4c722d879a5"}]
+} 
+// raw material does not exist
+
+###
+
+POST http://localhost:3000/procurement/import-raw-material
+Content-Type: application/json
+
+{
+  "raw_material_id" : "f2caeb77-df0a-42e0-9bee-a4c722d879a4",
+  "count" : 100,
+  "total_cost" : 100,
+  "name" : "water"
+}

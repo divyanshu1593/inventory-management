@@ -13,6 +13,7 @@ import { DatabaseSeeder } from './database-seeder/database-seeder.service';
 import { ManufacturingModule } from './manufacturing/manufacturing.module';
 import { AuthModule } from './auth/auth.module';
 import { AppConfigModule } from './config/config.module';
+import { ProcurementModule } from './procurement/procurement.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AppConfigModule } from './config/config.module';
     DatabaseSeedingModule,
     ManufacturingModule,
     AuthModule,
+    ProcurementModule,
   ],
   controllers: [AppController],
   providers: [AppService],

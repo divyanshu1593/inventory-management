@@ -1,7 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/config.service';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GlobalApiTransformApiInterceptor } from './interceptor/global-api-transfrom.interceptor';
 import { HttpExceptionTransformFilter } from './filters/failure-transformer.filter';
@@ -12,6 +12,7 @@ async function bootstrap() {
   const configService = app.get(AppConfigService);
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
   const port = configService.get('PORT');
 

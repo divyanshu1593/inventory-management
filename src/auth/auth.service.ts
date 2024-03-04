@@ -34,25 +34,31 @@ export class AuthService {
     const juniorRole = AuthorityMap.get(role);
     if (juniorRole === null) return [];
 
-    // TODO: automate remove passwordHash
-    const users = await this.userRepo.findBy({
+    return await this.userRepo.findBy({
       role: juniorRole,
       department: department,
       is_approved: false,
     });
-
-    return users.map(({ passwordHash, ...rest }) => rest);
   }
 
-  async approveRequests(role: UserRole, emails: string[]) {
+  async approveRequests(
+    role: UserRole,
+    department: CompanyDepartment,
+    emails: string[],
+  ) {
     const juniorRole = AuthorityMap.get(role);
 
-    // TODO: handle failures
+    // TODO: Maybe show errors on non-existent emails
     return await this.userRepo
       .createQueryBuilder('user')
       .update(User)
       .set({ is_approved: true })
-      .where({ role: juniorRole, email: In(emails), is_approved: false })
+      .where({
+        role: juniorRole,
+        email: In(emails),
+        is_approved: false,
+        department: department,
+      })
       .execute();
   }
 

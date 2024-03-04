@@ -5,5 +5,4 @@ export const AuthorityMap = new Map([
   [UserRole.OPERATOR, null],
   [UserRole.MANAGER, UserRole.OPERATOR],
   [UserRole.DEPARTMENT_HEAD, UserRole.MANAGER],
-  [UserRole.ADMIN, UserRole.DEPARTMENT_HEAD],
 ]);

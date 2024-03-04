@@ -11,11 +11,13 @@ export class ManufacturingController {
   async manufactureProduct(
     @Body() manufactureProductDto: ManufactureProductDto,
   ) {
-    await this.manufacturingService.manufactureProduct(manufactureProductDto);
+    return await this.manufacturingService.manufactureProduct(
+      manufactureProductDto,
+    );
   }
 
   @Post('add-new-product')
   async addProduct(@Body() productInfo: ProductDto) {
-    await this.manufacturingService.addProduct(productInfo);
+    return await this.manufacturingService.addProduct(productInfo);
   }
 }

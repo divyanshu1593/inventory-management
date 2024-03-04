@@ -22,14 +22,17 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOneBy({ email });
     if (!user) {
-      throw new NotFoundException('User Not found in Database or not Approved');
+      throw new NotFoundException('User Not found in Database');
     }
-    const matched: boolean = await bcrypt.compare(password, user.passwordHash);
 
+    if (!user.is_approved) {
+      throw new UnauthorizedException('User is not yet Approved!');
+    }
+
+    const matched = await bcrypt.compare(password, user.passwordHash);
     if (!matched) {
       throw new UnauthorizedException('Please check your login criteria');
     }
-
     return user;
   }
 }

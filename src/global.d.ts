@@ -1,4 +1,5 @@
 import type { JwtPayload } from './auth/types/jwt-payload.type';
+import { CompanyDepartment } from './database/entities/company-departments';
 
 declare global {
   interface Array<T> {
@@ -8,7 +9,7 @@ declare global {
     interface User {
       id: string;
       role: UserRole;
-      jwtPayload: JwtPayload;
+      department: CompanyDepartment;
     }
   }
 }

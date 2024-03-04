@@ -10,7 +10,7 @@ class RoleGuard implements CanActivate {
 
     const request: Request = ctx.getRequest<Request>();
 
-    return this.roles.includes(request.user.jwtPayload.role);
+    return this.roles.includes(request.user.role);
   }
 }
 

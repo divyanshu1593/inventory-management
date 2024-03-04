@@ -43,6 +43,7 @@ export class AuthController {
   ) {
     return await this.authService.approveRequests(
       req.user.role,
+      req.user.department,
       userEmailArray.emails,
     );
   }

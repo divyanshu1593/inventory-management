@@ -10,12 +10,17 @@ import { RawMaterialInfoDto } from './dto/raw-material-info.req.dto';
 import { RawMaterial } from 'src/database/entities/raw-material.entity';
 import { RawMaterialImport } from 'src/database/entities/raw-material-import.entity';
 import { RawMaterialImportDto } from './dto/raw-material-import.req.dto';
+import { MachineImportDto } from './dto/machine-import.req.dto';
+import { MachineImport } from 'src/database/entities/machine-import.entity';
 
 @Injectable()
 export class ProcurementService {
   constructor(
     @InjectRepository(Machine)
     private readonly machineRepo: Repository<Machine>,
+
+    @InjectRepository(MachineImport)
+    private readonly machineImportRepo: Repository<MachineImport>,
 
     @InjectRepository(RawMaterial)
     private readonly rawMaterialRepo: Repository<RawMaterial>,
@@ -24,7 +29,7 @@ export class ProcurementService {
     private readonly rawMaterialImportRepo: Repository<RawMaterialImport>,
   ) {}
 
-  async importNewMachine(machineInfoDto: MachineInfoDto) {
+  async addNewMachine(machineInfoDto: MachineInfoDto) {
     const createdMachine = this.machineRepo.create({
       name: machineInfoDto.name,
       consumes: machineInfoDto.consumes,
@@ -41,6 +46,16 @@ export class ProcurementService {
         () => new BadRequestException('Machine with that name Already Exists'),
       )
       .execute();
+  }
+
+  async importMachine(machineImportDto: MachineImportDto) {
+    const { machine_id, ...rest } = machineImportDto;
+
+    const created = this.machineImportRepo.create({
+      ...rest,
+      machine: { id: machine_id },
+    });
+    return await this.machineImportRepo.save(created);
   }
 
   async createRawMaterialEntry(rawMaterialInfoDto: RawMaterialInfoDto) {

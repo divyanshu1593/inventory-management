@@ -34,11 +34,11 @@ describe('ProcurementController', () => {
   });
 
   describe(`Importing of Machine`, () => {
-    it(`Should not import machine with same name`, async () => {
+    it(`Should not create machine entry with same name`, async () => {
       const mockRawMaterial = await seeder.rawMaterialSeeder.createEntry();
       const mockMachine = await seeder.machineSeeder.createEntry();
 
-      const request = controller.importMachine({
+      const request = controller.addMachine({
         name: mockMachine[0].name,
         consumes: [{ id: mockRawMaterial[0].id }],
       });
@@ -46,8 +46,8 @@ describe('ProcurementController', () => {
       expect(request).rejects.toThrow('Machine with that name Already Exists');
     });
 
-    it(`Should not import when raw materials are not available`, async () => {
-      const request = controller.importMachine({
+    it(`Should not create when raw materials are not available`, async () => {
+      const request = controller.addMachine({
         consumes: [{ id: 'xxxx-xxxx-xxxx-xxxx-xxxx' }],
         name: 'new_machine',
       });
@@ -57,12 +57,12 @@ describe('ProcurementController', () => {
       );
     });
 
-    it(`Should successfully import on valid data`, async () => {
+    it(`Should successfully create on valid data`, async () => {
       const created = (
         await seeder.rawMaterialSeeder.createEntry()
       ).getFirstOrFail();
 
-      const request = await controller.importMachine({
+      const request = await controller.addMachine({
         consumes: [created],
         name: 'machine_doesnt_exist',
       });
@@ -71,6 +71,7 @@ describe('ProcurementController', () => {
         name: 'machine_doesnt_exist',
         consumes: [{ id: created.id }],
       });
+      // TODO: create test cases for machine importing
     });
   });
 
@@ -102,7 +103,7 @@ describe('ProcurementController', () => {
 
   describe(`Raw Material Entry Creation`, () => {
     it(`Should create when it doesnt exist`, async () => {
-      await controller.createRawMaterial({
+      await controller.addRawMaterial({
         amount: 100,
         cost: 100,
         name: 'new_material',
@@ -115,7 +116,7 @@ describe('ProcurementController', () => {
       ).getFirstOrFail();
       const { id, ...rest } = created;
 
-      const creationPromise = controller.createRawMaterial(rest);
+      const creationPromise = controller.addRawMaterial(rest);
 
       expect(creationPromise).rejects.toThrow();
     });

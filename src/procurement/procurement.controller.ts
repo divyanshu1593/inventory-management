@@ -3,14 +3,21 @@ import { ProcurementService } from './procurement.service';
 import { MachineInfoDto } from './dto/machine-info.req.dto';
 import { RawMaterialInfoDto } from './dto/raw-material-info.req.dto';
 import { RawMaterialImportDto } from './dto/raw-material-import.req.dto';
+import { MachineImportDto } from './dto/machine-import.req.dto';
 
 @Controller('procurement')
 export class ProcurementController {
   constructor(private readonly procurementService: ProcurementService) {}
   // TODO: Guarded by Department Head
   @Post('add-machine')
-  async importMachine(@Body() machineInfoDto: MachineInfoDto) {
-    return await this.procurementService.importNewMachine(machineInfoDto);
+  async addMachine(@Body() machineInfoDto: MachineInfoDto) {
+    return await this.procurementService.addNewMachine(machineInfoDto);
+  }
+
+  // TODO: Guarded by Department Head
+  @Post('import-machine')
+  async importMachine(@Body() machineImportDto: MachineImportDto) {
+    return await this.procurementService.importMachine(machineImportDto);
   }
 
   // TODO: guarded by Manager
@@ -22,8 +29,8 @@ export class ProcurementController {
   }
 
   // TODO: guarded by Department Head
-  @Post('create-raw-material')
-  async createRawMaterial(@Body() rawMaterialInfoDto: RawMaterialInfoDto) {
+  @Post('add-raw-material')
+  async addRawMaterial(@Body() rawMaterialInfoDto: RawMaterialInfoDto) {
     return await this.procurementService.createRawMaterialEntry(
       rawMaterialInfoDto,
     );

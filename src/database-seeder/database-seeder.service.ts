@@ -7,6 +7,7 @@ import { ProductSaleSeeder } from './entity-seeders/product-sale.seeder';
 import { RawMaterialImportSeeder } from './entity-seeders/raw-material-import.seeder';
 import { ProductionBatchSeeder } from './entity-seeders/production-batch.seeder';
 import { MachineConsumptionSeeder } from './entity-seeders/machine-consumption.seeder';
+import { MachineImportSeeder } from './entity-seeders/machine-import.seeder';
 
 @Injectable()
 export class DatabaseSeeder {
@@ -19,6 +20,7 @@ export class DatabaseSeeder {
     readonly rawMaterialImportSeeder: RawMaterialImportSeeder,
     readonly productionBatchSeeder: ProductionBatchSeeder,
     readonly machineConsumptionSeeder: MachineConsumptionSeeder,
+    readonly machineImportSeeder: MachineImportSeeder,
   ) {}
 
   async seedAll() {
@@ -31,5 +33,6 @@ export class DatabaseSeeder {
     await this.rawMaterialImportSeeder.seed();
     await this.productionBatchSeeder.seed();
     await this.machineConsumptionSeeder.seed();
+    await this.machineImportSeeder.seed();
   }
 }

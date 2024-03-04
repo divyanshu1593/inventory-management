@@ -16,7 +16,9 @@ export class Machine {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => RawMaterial, (raw_material) => raw_material.consumed_by)
+  @ManyToMany(() => RawMaterial, (raw_material) => raw_material.consumed_by, {
+    nullable: false,
+  })
   @JoinTable()
   consumes: RawMaterial[];
 }

@@ -1,4 +1,5 @@
 import { MachineConsumption } from './entities/machine-consumption.entity';
+import { MachineImport } from './entities/machine-import.entity';
 import { Machine } from './entities/machine.entity';
 import { ProductSale } from './entities/product-sale.entity';
 import { Product } from './entities/product.entity';
@@ -16,4 +17,5 @@ export const AllEntities = [
   ProductionBatch,
   RawMaterialImport,
   RawMaterial,
+  MachineImport,
 ];

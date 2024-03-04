@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { applyDecorators } from '@nestjs/common';
 import { CompanyDepartment } from 'src/database/entities/company-departments';
+import { UserRole } from 'src/database/entities/user.roles';
 
 class DepartmentGuard implements CanActivate {
   constructor(private readonly department: CompanyDepartment) {}
@@ -10,7 +11,10 @@ class DepartmentGuard implements CanActivate {
 
     const request: Request = ctx.getRequest<Request>();
 
-    return this.department === request.user.department;
+    return (
+      request.user.role === UserRole.ADMIN ||
+      this.department === request.user.department
+    );
   }
 }
 

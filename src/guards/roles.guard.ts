@@ -10,7 +10,10 @@ class RoleGuard implements CanActivate {
 
     const request: Request = ctx.getRequest<Request>();
 
-    return this.roles.includes(request.user.role);
+    return (
+      request.user.role === UserRole.ADMIN ||
+      this.roles.includes(request.user.role)
+    );
   }
 }
 

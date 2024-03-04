@@ -9,6 +9,7 @@ import { Machine } from '../entities/machine.entity';
 import { RawMaterial } from '../entities/raw-material.entity';
 import { User } from '../entities/user.entity';
 import { UserRole } from '../entities/user.roles';
+import { CompanyDepartment } from '../entities/company-departments';
 
 describe(`Must adhere to unique constraints`, () => {
   let moduleRef: TestingModule;
@@ -94,6 +95,9 @@ describe(`Must adhere to unique constraints`, () => {
       address: 'address',
       name: 'mock',
       role: UserRole.OPERATOR,
+      passwordHash: 'mock',
+      is_approved: false,
+      department: CompanyDepartment.MANUFACTURING,
     };
 
     const user1 = userRepo.create(mockUser);

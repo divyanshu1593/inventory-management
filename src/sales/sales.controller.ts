@@ -18,8 +18,8 @@ export class SalesController {
   }
 
   @Get('id/:id')
-  getSalesById(@Param('id') productId: UUID) {
-    return this.salesService.getSalesById(productId);
+  getSaleById(@Param('id') productId: UUID) {
+    return this.salesService.getSaleById(productId);
   }
 
   @Get('totalcost/:totalCost')

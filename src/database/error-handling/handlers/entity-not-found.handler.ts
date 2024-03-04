@@ -1,6 +1,5 @@
 import { EntityNotFoundError } from 'typeorm';
-import { CanHandle } from '../error-handler.adapter';
+import type { CanHandle } from '../error-handler.adapter';
 
-export const EntityNotFoundHandler: CanHandle = (error) => {
-  return error instanceof EntityNotFoundError;
-};
+export const EntityNotFoundHandler: CanHandle = (error) =>
+  error instanceof EntityNotFoundError;

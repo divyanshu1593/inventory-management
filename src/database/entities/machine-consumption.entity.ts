@@ -9,15 +9,15 @@ export class MachineConsumption {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @ManyToOne(() => ProductionBatch)
+  @ManyToOne(() => ProductionBatch, { nullable: false })
   batch: ProductionBatch;
 
   // TODO: this many to One Realtionship does not enforce
   // database level check for "which machine can consume which raw material"
-  @ManyToOne(() => Machine)
+  @ManyToOne(() => Machine, { nullable: false })
   machine: Machine;
 
-  @ManyToOne(() => RawMaterial)
+  @ManyToOne(() => RawMaterial, { nullable: false })
   raw_material: RawMaterial;
 
   @Column()

@@ -16,6 +16,6 @@ export class RawMaterial {
   @Column()
   amount: number;
 
-  @ManyToMany(() => Machine, (machine) => machine.consumes)
+  @ManyToMany(() => Machine, (machine) => machine.consumes, { nullable: true })
   consumed_by: Machine[];
 }

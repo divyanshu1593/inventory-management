@@ -14,7 +14,7 @@ export class ProductSale {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, { nullable: false })
   @JoinColumn()
   product: Product;
 

@@ -13,7 +13,7 @@ export class RawMaterialImport {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @ManyToOne(() => RawMaterial)
+  @ManyToOne(() => RawMaterial, { nullable: false })
   raw_material: RawMaterial;
 
   @Column()

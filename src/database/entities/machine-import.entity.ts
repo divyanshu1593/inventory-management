@@ -13,7 +13,7 @@ export class MachineImport {
   @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
-  @ManyToOne(() => Machine)
+  @ManyToOne(() => Machine, { nullable: false })
   machine: Machine;
 
   @Column()

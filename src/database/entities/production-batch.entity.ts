@@ -15,6 +15,6 @@ export class ProductionBatch {
   @CreateDateColumn()
   date: Date;
 
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, { nullable: false })
   product: Product;
 }

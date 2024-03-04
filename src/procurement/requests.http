@@ -29,3 +29,15 @@ Content-Type: application/json
   "total_cost" : 100,
   "name" : "water"
 }
+
+
+###
+
+POST http://localhost:3000/procurement/import-machine
+Content-Type: application/json
+
+{
+  "machine_id" : "x-x-x-x",
+  "count" : 100,
+  "total_cost" : 10000
+}

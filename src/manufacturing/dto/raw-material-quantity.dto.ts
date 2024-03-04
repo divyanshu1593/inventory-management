@@ -1,9 +1,9 @@
-import { IsNumber, Min } from 'class-validator';
-import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
+import { IsNumber, IsUUID, Min } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class RawMaterialQuantityDto {
-  @IsNotEmptyString()
-  rawMaterialName: string;
+  @IsUUID()
+  rawMaterialId: UUID;
 
   @IsNumber()
   @Min(0)

@@ -1,23 +1,23 @@
-import { ArrayNotEmpty, IsArray, ValidateNested } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { RawMaterialQuantityDto } from './raw-material-quantity.dto';
-import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
+import { UUID } from 'crypto';
+import { ArrayClassUnique } from 'src/core/decorators/array-unique.decorator';
 
 export class ManufactureProductDto {
-  @IsNotEmptyString()
-  productName: string;
+  @IsUUID()
+  productId: UUID;
 
-  @IsNotEmptyString()
-  productModel: string;
+  @IsUUID()
+  machineId: UUID;
 
-  @IsNotEmptyString()
-  productVariant: string;
-
-  @IsNotEmptyString()
-  machineName: string;
-
-  @Transform(({ value }) => JSON.parse(value))
   @IsArray()
+  @ArrayClassUnique(RawMaterialQuantityDto, (rm) => rm.rawMaterialId)
   @ArrayNotEmpty()
   @ValidateNested()
   @Type(() => RawMaterialQuantityDto)

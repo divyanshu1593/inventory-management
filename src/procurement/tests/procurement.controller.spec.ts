@@ -33,14 +33,18 @@ describe('ProcurementController', () => {
     });
   });
 
-  describe(`Importing of Machine`, () => {
+  describe(`Creation of Machine Entry`, () => {
     it(`Should not create machine entry with same name`, async () => {
-      const mockRawMaterial = await seeder.rawMaterialSeeder.createEntry();
-      const mockMachine = await seeder.machineSeeder.createEntry();
+      const mockRawMaterial = (
+        await seeder.rawMaterialSeeder.createEntry()
+      ).getFirstOrFail();
+      const mockMachine = (
+        await seeder.machineSeeder.createEntry()
+      ).getFirstOrFail();
 
       const request = controller.addMachine({
-        name: mockMachine[0].name,
-        consumes: [{ id: mockRawMaterial[0].id }],
+        name: mockMachine.name,
+        consumes: [{ id: mockRawMaterial.id }],
       });
 
       expect(request).rejects.toThrow('Machine with that name Already Exists');
@@ -71,7 +75,40 @@ describe('ProcurementController', () => {
         name: 'machine_doesnt_exist',
         consumes: [{ id: created.id }],
       });
-      // TODO: create test cases for machine importing
+    });
+  });
+
+  describe(`Importing a Machine`, () => {
+    it(`Should import a machine when it exists`, async () => {
+      const mockMachine = (
+        await seeder.machineSeeder.createEntry()
+      ).getFirstOrFail();
+
+      const { id } = mockMachine;
+
+      const entry = await controller.importMachine({
+        count: 100,
+        machine_id: id,
+        total_cost: 100,
+      });
+
+      expect(entry).toMatchObject({
+        count: 100,
+        total_cost: 100,
+        machine: {
+          id: id,
+        },
+      });
+    });
+
+    it(`Should NOT import when the machine doesnt exist`, () => {
+      const machineImportPromise = controller.importMachine({
+        count: 100,
+        machine_id: 'does-not-exist-in-db',
+        total_cost: 100,
+      });
+
+      expect(machineImportPromise).rejects.toThrow('Machine does not exist');
     });
   });
 
@@ -93,9 +130,16 @@ describe('ProcurementController', () => {
         await seeder.rawMaterialSeeder.createEntry()
       ).getFirstOrFail();
 
-      await controller.importRawMaterial({
+      const { id } = randomMaterial;
+      const entry = await controller.importRawMaterial({
         count: 100,
-        raw_material_id: randomMaterial.id,
+        raw_material_id: id,
+        total_cost: 1000,
+      });
+
+      expect(entry).toMatchObject({
+        raw_material: { id },
+        count: 100,
         total_cost: 1000,
       });
     });
@@ -103,11 +147,13 @@ describe('ProcurementController', () => {
 
   describe(`Raw Material Entry Creation`, () => {
     it(`Should create when it doesnt exist`, async () => {
-      await controller.addRawMaterial({
+      const mockData = {
         amount: 100,
         cost: 100,
         name: 'new_material',
-      });
+      };
+      const entry = await controller.addRawMaterial(mockData);
+      expect(entry).toMatchObject(mockData);
     });
 
     it(`should not create when it already exists`, async () => {

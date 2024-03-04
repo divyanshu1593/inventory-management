@@ -55,7 +55,13 @@ export class ProcurementService {
       ...rest,
       machine: { id: machine_id },
     });
-    return await this.machineImportRepo.save(created);
+
+    return tryWith(this.machineImportRepo.save(created))
+      .onError(
+        SqliteForeignConstraint,
+        () => new BadRequestException('Machine does not exist'),
+      )
+      .execute();
   }
 
   async createRawMaterialEntry(rawMaterialInfoDto: RawMaterialInfoDto) {

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { FindOperator, In, Repository } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.roles';
 import { User } from 'src/database/entities/user.entity';
 import { AuthorityMap } from './authority-maping';
@@ -30,13 +30,20 @@ export class AuthService {
     });
   }
 
+  private getJuniorRole(role: UserRole): FindOperator<UserRole> {
+    return role === UserRole.ADMIN
+      ? In([UserRole.DEPARTMENT_HEAD, UserRole.MANAGER, UserRole.OPERATOR])
+      : In([AuthorityMap.get(role)]);
+  }
+
   async getApprovableRequests(role: UserRole, department: CompanyDepartment) {
-    const juniorRole = AuthorityMap.get(role);
-    if (juniorRole === null) return [];
+    const juniorRole = this.getJuniorRole(role);
+
+    const _dept = role === UserRole.ADMIN ? null : department;
 
     return await this.userRepo.findBy({
       role: juniorRole,
-      department: department,
+      department: _dept,
       is_approved: false,
     });
   }
@@ -46,20 +53,27 @@ export class AuthService {
     department: CompanyDepartment,
     emails: string[],
   ) {
-    const juniorRole = AuthorityMap.get(role);
+    const juniorRole = this.getJuniorRole(role);
 
-    // TODO: Maybe show errors on non-existent emails
-    return await this.userRepo
+    const baseFindOptions = {
+      role: juniorRole,
+      email: In(emails),
+      is_approved: false,
+    };
+
+    const moreFindOptions = role === UserRole.ADMIN ? {} : { department };
+
+    const result = await this.userRepo
       .createQueryBuilder('user')
       .update(User)
       .set({ is_approved: true })
       .where({
-        role: juniorRole,
-        email: In(emails),
-        is_approved: false,
-        department: department,
+        ...baseFindOptions,
+        ...moreFindOptions,
       })
       .execute();
+
+    return { affected: result.affected };
   }
 
   login(payload: SignableJwtPayload) {

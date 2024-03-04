@@ -2,6 +2,7 @@ import { UUID } from 'crypto';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from './user.roles';
 import { CompanyDepartment } from './company-departments';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -17,6 +18,7 @@ export class User {
   @Column()
   name: string;
 
+  @Exclude()
   @Column()
   passwordHash: string;
 

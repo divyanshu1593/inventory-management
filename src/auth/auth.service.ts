@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +9,8 @@ import { User } from 'src/database/entities/user.entity';
 import { AuthorityMap } from './authority-maping';
 import { SignableJwtPayload } from './types/jwt-payload.type';
 import { CompanyDepartment } from 'src/database/entities/company-departments';
+import { SqliteUniqueConstraint } from 'src/database/error-handling/handlers/unique-constraint.handler';
+import { tryWith } from 'src/database/error-handling/error-handler.adapter';
 
 @Injectable()
 export class AuthService {
@@ -23,11 +25,17 @@ export class AuthService {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    await this.userRepo.insert({
-      ...userInfoWithoutPassword,
-      is_approved: false,
-      passwordHash,
-    });
+    await tryWith(
+      this.userRepo.insert({
+        ...userInfoWithoutPassword,
+        is_approved: false,
+        passwordHash,
+      }),
+    )
+      .onError(SqliteUniqueConstraint, () => {
+        throw new NotAcceptableException('user already exist');
+      })
+      .execute();
   }
 
   private getJuniorRole(role: UserRole): FindOperator<UserRole> {

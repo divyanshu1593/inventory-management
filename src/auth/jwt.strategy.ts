@@ -5,6 +5,8 @@ import { AppConfigService } from 'src/config/config.service';
 import type { JwtPayload } from './types/jwt-payload.type';
 import { Request } from 'express';
 
+export const JWT_COOKIE_KEY = 'jwt';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -18,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWT(req: Request): string | null {
-    return req?.cookies?.jwt;
+    return req?.cookies?.[JWT_COOKIE_KEY];
   }
 
   async validate(payload: JwtPayload) {

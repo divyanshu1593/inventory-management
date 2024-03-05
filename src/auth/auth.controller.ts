@@ -16,13 +16,14 @@ import { AuthService } from './auth.service';
 import { userEmailArrayDto } from './dto/user-email-array.dto';
 import { AllowRoles } from 'src/guards/roles.guard';
 import { UserRole } from 'src/database/entities/user.roles';
+import { JWT_COOKIE_KEY } from './jwt.strategy';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @AllowUnauthorized()
-  @Post('signup/')
+  @Post('signup')
   async addUnapprovedUser(@Body() userInfo: UserSignupDto) {
     return await this.authService.addUnapprovedUser(userInfo);
   }
@@ -49,17 +50,23 @@ export class AuthController {
     );
   }
 
-  @Post('signin/')
+  @Post('signin')
   @UseGuards(LocalAuthGuard)
   @AllowUnauthorized()
-  login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  signin(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const jwt = this.authService.login({
       id: req.user.id,
       role: req.user.role,
       department: req.user.department,
     });
 
-    res.cookie('jwt', jwt.token, { httpOnly: true });
+    res.cookie(JWT_COOKIE_KEY, jwt.token, { httpOnly: true });
     return req.user;
+  }
+
+  @Post('signout')
+  signout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie(JWT_COOKIE_KEY);
+    return {};
   }
 }

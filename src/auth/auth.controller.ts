@@ -6,8 +6,9 @@ import {
   UseGuards,
   Get,
   Put,
+  Res,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AllowUnauthorized } from 'src/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { UserSignupDto } from './dto/user-signup.dto';
@@ -51,11 +52,14 @@ export class AuthController {
   @Post('signin/')
   @UseGuards(LocalAuthGuard)
   @AllowUnauthorized()
-  login(@Req() req: Request) {
-    return this.authService.login({
+  login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const jwt = this.authService.login({
       id: req.user.id,
       role: req.user.role,
       department: req.user.department,
     });
+
+    res.cookie('jwt', jwt.token, { httpOnly: true });
+    return req.user;
   }
 }

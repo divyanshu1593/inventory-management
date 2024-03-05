@@ -59,7 +59,7 @@ export class AuthController {
       department: req.user.department,
     });
 
-    res.cookie('Jwt', jwt.token, { httpOnly: true });
-    return jwt;
+    res.cookie('jwt', jwt.token, { httpOnly: true });
+    return req.user;
   }
 }

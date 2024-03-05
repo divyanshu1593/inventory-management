@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProductDto } from './dto/product-info.dto';
 import { ManufacturingService } from './manufacturing.service';
 import { ManufactureProductDto } from './dto/manufacture-product.dto';
@@ -26,5 +26,15 @@ export class ManufacturingController {
   @Post('add-new-product')
   async addProduct(@Body() productInfo: ProductDto) {
     return await this.manufacturingService.addProduct(productInfo);
+  }
+
+  @Get('products')
+  getAllProducts() {
+    return this.manufacturingService.getAllProducts();
+  }
+
+  @Get('manufactured-product')
+  getManufacturedProductInfo() {
+    return this.manufacturingService.getManufacturedProductInfo();
   }
 }

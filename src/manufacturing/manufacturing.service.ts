@@ -80,4 +80,18 @@ export class ManufacturingService {
       })
       .execute();
   }
+
+  async getAllProducts() {
+    return await this.dataSource.manager.find(Product);
+  }
+
+  async getManufacturedProductInfo() {
+    return await this.dataSource
+      .createQueryBuilder(MachineConsumption, 'machine_consumtion')
+      .innerJoinAndSelect('machine_consumtion.batch', 'production_batch')
+      .innerJoinAndSelect('machine_consumtion.machine', 'machine')
+      .innerJoinAndSelect('machine_consumtion.raw_material', 'raw_material')
+      .innerJoinAndSelect('production_batch.product', 'product')
+      .getRawMany();
+  }
 }

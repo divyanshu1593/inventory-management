@@ -5,6 +5,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GlobalApiTransformApiInterceptor } from './interceptor/global-api-transfrom.interceptor';
 import { HttpExceptionTransformFilter } from './filters/failure-transformer.filter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
   const port = configService.get('PORT');
+
+  app.use(cookieParser());
 
   // Response Transformers
   app.useGlobalFilters(new HttpExceptionTransformFilter());

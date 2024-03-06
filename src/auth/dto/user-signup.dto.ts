@@ -1,4 +1,10 @@
-import { IsEmail, IsEnum, IsStrongPassword, NotEquals } from 'class-validator';
+import {
+  IsAlpha,
+  IsEmail,
+  IsEnum,
+  IsStrongPassword,
+  NotEquals,
+} from 'class-validator';
 import { CompanyDepartment } from 'src/database/entities/company-departments';
 import { UserRole } from 'src/database/entities/user.roles';
 import { IsNotEmptyString } from 'src/manufacturing/custom-decorators/is-not-empty-string.decorator';
@@ -10,6 +16,7 @@ export class UserSignupDto {
   @IsNotEmptyString()
   address: string;
 
+  @IsAlpha()
   @IsNotEmptyString()
   name: string;
 

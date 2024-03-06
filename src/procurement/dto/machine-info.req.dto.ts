@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
+  IsAlpha,
   IsArray,
   IsUUID,
   ValidateNested,
@@ -9,6 +10,7 @@ import { UUID } from 'crypto';
 import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
 export class MachineInfoDto {
+  @IsAlpha()
   @IsNotEmptyString()
   name: string;
 

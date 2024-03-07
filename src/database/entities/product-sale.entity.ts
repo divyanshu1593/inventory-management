@@ -24,7 +24,7 @@ export class ProductSale {
   @Column()
   to: string;
 
-  @Column()
+  @Column({ type: 'real' })
   total_cost: number;
 
   @CreateDateColumn()

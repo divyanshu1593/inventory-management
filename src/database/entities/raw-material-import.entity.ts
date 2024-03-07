@@ -22,6 +22,6 @@ export class RawMaterialImport {
   @CreateDateColumn()
   date: Date;
 
-  @Column()
+  @Column({ type: 'real' })
   total_cost: number;
 }

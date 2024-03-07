@@ -1,12 +1,8 @@
-import { Injectable, type ExecutionContext, SetMetadata } from '@nestjs/common';
+import { Injectable, type ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import type { Observable } from 'rxjs';
-
-const ALLOW_UNAUTHORIZED_KEY = 'allowUnauthorized';
-
-export const AllowUnauthorized = () =>
-  SetMetadata(ALLOW_UNAUTHORIZED_KEY, true);
+import { ALLOW_UNAUTHORIZED_KEY } from './allow-unauthorized';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

@@ -6,6 +6,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GlobalApiTransformApiInterceptor } from './interceptor/global-api-transfrom.interceptor';
 import { HttpExceptionTransformFilter } from './filters/failure-transformer.filter';
 import * as cookieParser from 'cookie-parser';
+import { DepartmentGuard } from './guards/department.guard';
+import { RoleGuard } from './guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +15,8 @@ async function bootstrap() {
   const configService = app.get(AppConfigService);
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(new DepartmentGuard(reflector));
+  app.useGlobalGuards(new RoleGuard(reflector));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
   app.enableCors({
     origin: true,

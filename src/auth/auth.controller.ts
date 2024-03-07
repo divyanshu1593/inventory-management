@@ -14,9 +14,10 @@ import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { AuthService } from './auth.service';
 import { userEmailArrayDto } from './dto/user-email-array.dto';
-import { AllowRoles } from 'src/guards/roles.guard';
+import { AllowAllRoles, AllowRoles } from 'src/guards/roles.guard';
 import { UserRole } from 'src/database/entities/user.roles';
 import { JWT_COOKIE_KEY } from './jwt.strategy';
+import { AllowAllDept } from 'src/guards/department.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +30,7 @@ export class AuthController {
   }
 
   @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
+  @AllowAllDept()
   @Get('signup/get-approvable-requests')
   async getApprovableRequests(@Req() req: Request) {
     return await this.authService.getApprovableRequests(
@@ -38,6 +40,7 @@ export class AuthController {
   }
 
   @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
+  @AllowAllDept()
   @Put('signup/approve-requests')
   async approveRequests(
     @Req() req: Request,
@@ -65,6 +68,8 @@ export class AuthController {
   }
 
   @Post('signout')
+  @AllowAllDept()
+  @AllowAllRoles()
   signout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie(JWT_COOKIE_KEY);
     return {};

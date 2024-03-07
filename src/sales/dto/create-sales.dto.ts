@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUUID, Min } from 'class-validator';
 import { UUID } from 'crypto';
 import { IsNotEmptyString } from 'src/core/decorators/is-not-empty-string.decorator';
 
@@ -8,6 +8,7 @@ export class CreateSalesDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Min(1)
   count: number;
 
   @IsNotEmptyString()
@@ -15,5 +16,6 @@ export class CreateSalesDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Min(0)
   total_cost: number;
 }

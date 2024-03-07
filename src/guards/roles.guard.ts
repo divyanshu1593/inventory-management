@@ -34,3 +34,8 @@ const AllowRolesReflector = Reflector.createDecorator<UserRole[]>();
 export function AllowRoles(...roles: UserRole[]) {
   return applyDecorators(AllowRolesReflector(roles));
 }
+
+export const AllowAllRoles = () => {
+  const allRoles = Object.values(UserRole);
+  return applyDecorators(AllowRoles(...allRoles));
+};

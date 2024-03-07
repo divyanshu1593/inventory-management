@@ -20,7 +20,7 @@ export class DepartmentGuard implements CanActivate {
 
     const ctx = context.switchToHttp();
 
-    const department = this.reflector.getAllAndOverride(DeptGuardReflector, [
+    const departments = this.reflector.getAllAndOverride(DeptGuardReflector, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -31,12 +31,17 @@ export class DepartmentGuard implements CanActivate {
       return true;
     }
 
-    return department === request.user.department;
+    return departments.includes(request.user.department);
   }
 }
 
-const DeptGuardReflector = Reflector.createDecorator<CompanyDepartment>();
+const DeptGuardReflector = Reflector.createDecorator<CompanyDepartment[]>();
 
-export function AllowDept(department: CompanyDepartment) {
-  return applyDecorators(DeptGuardReflector(department));
+export function AllowDept(...departments: CompanyDepartment[]) {
+  return applyDecorators(DeptGuardReflector(departments));
 }
+
+export const AllowAllDept = () => {
+  const allDept = Object.values(CompanyDepartment);
+  return applyDecorators(AllowDept(...allDept));
+};

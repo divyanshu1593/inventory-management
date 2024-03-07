@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumber, IsUUID, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNumber, IsUUID, Min } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class MachineImportDto {
@@ -6,12 +7,12 @@ export class MachineImportDto {
   machine_id: UUID;
 
   @IsNumber()
-  @IsNotEmpty()
-  @Min(0)
+  @Transform(({ value }) => +value)
+  @Min(1)
   count: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @Transform(({ value }) => +value)
   @Min(0)
   total_cost: number;
 }

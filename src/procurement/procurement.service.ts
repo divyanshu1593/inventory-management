@@ -65,7 +65,10 @@ export class ProcurementService {
   }
 
   async createRawMaterialEntry(rawMaterialInfoDto: RawMaterialInfoDto) {
-    const createdMaterial = this.rawMaterialRepo.create(rawMaterialInfoDto);
+    const createdMaterial = this.rawMaterialRepo.create({
+      ...rawMaterialInfoDto,
+      amount: 0,
+    });
 
     return tryWith(this.rawMaterialRepo.save(createdMaterial))
       .onError(

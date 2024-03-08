@@ -63,7 +63,7 @@ export class ManufacturingService {
             .map((rawMaterialInfo) => {
               return `WHEN id = '${rawMaterialInfo.rawMaterialId}' AND amount - ${rawMaterialInfo.amount} > 0 THEN amount - ${rawMaterialInfo.amount}`;
             })
-            .join('')}
+            .join(' ')}
           END
           WHERE id in (${rawMaterialIds.map((x) => `'${x}'`).join()})`,
           ),

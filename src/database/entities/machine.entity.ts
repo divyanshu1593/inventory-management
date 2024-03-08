@@ -16,7 +16,7 @@ export class Machine {
   @Column({ unique: true })
   name: string;
 
-  @Column()
+  @Column({ type: 'unsigned big int' })
   count: number;
 
   @ManyToMany(() => RawMaterial, (raw_material) => raw_material.consumed_by, {

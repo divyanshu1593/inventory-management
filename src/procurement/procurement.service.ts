@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Like, Repository } from 'typeorm';
 import { MachineInfoDto } from './dto/machine-info.req.dto';
 import { Machine } from 'src/database/entities/machine.entity';
 import { tryWith } from 'src/database/error-handling/error-handler.adapter';
@@ -16,6 +16,9 @@ import { MachineImport } from 'src/database/entities/machine-import.entity';
 @Injectable()
 export class ProcurementService {
   constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+
     @InjectRepository(Machine)
     private readonly machineRepo: Repository<Machine>,
 
@@ -69,7 +72,7 @@ export class ProcurementService {
       count: 0,
     });
 
-    return tryWith(this.machineRepo.save(createdMachine))
+    return await tryWith(this.machineRepo.save(createdMachine))
       .onError(
         SqliteForeignConstraint,
         () =>
@@ -90,12 +93,24 @@ export class ProcurementService {
       machine: { id: machine_id },
     });
 
-    return tryWith(this.machineImportRepo.save(created))
-      .onError(
-        SqliteForeignConstraint,
-        () => new BadRequestException('Machine does not exist'),
-      )
-      .execute();
+    await this.dataSource.transaction(async (entityManager) => {
+      await tryWith(entityManager.getRepository(MachineImport).save(created))
+        .onError(
+          SqliteForeignConstraint,
+          () => new BadRequestException('Machine does not exist'),
+        )
+        .execute();
+
+      await entityManager
+        .createQueryBuilder()
+        .update(Machine)
+        .whereInIds(machine_id)
+        .set({ count: () => 'count + :x' })
+        .setParameter('x', rest.count)
+        .execute();
+    });
+
+    return 'Machine Imported Successfully';
   }
 
   async createRawMaterialEntry(rawMaterialInfoDto: RawMaterialInfoDto) {
@@ -104,7 +119,7 @@ export class ProcurementService {
       amount: 0,
     });
 
-    return tryWith(this.rawMaterialRepo.save(createdMaterial))
+    return await tryWith(this.rawMaterialRepo.save(createdMaterial))
       .onError(
         SqliteUniqueConstraint,
         () => new BadRequestException('Raw Material already exists'),
@@ -118,12 +133,25 @@ export class ProcurementService {
       ...rest,
       raw_material: { id: raw_material_id },
     });
-    return tryWith(this.rawMaterialImportRepo.save(createdImportRecord))
-      .onError(
-        SqliteForeignConstraint,
-        () =>
-          new BadRequestException('No such Raw material exists in database'),
-      )
-      .execute();
+
+    await this.dataSource.transaction(async (entityManager) => {
+      await tryWith(this.rawMaterialImportRepo.save(createdImportRecord))
+        .onError(
+          SqliteForeignConstraint,
+          () =>
+            new BadRequestException('No such Raw material exists in database'),
+        )
+        .execute();
+
+      await entityManager
+        .createQueryBuilder()
+        .update(RawMaterial)
+        .whereInIds(raw_material_id)
+        .set({ amount: () => 'amount + :x' })
+        .setParameter('x', rest.count)
+        .execute();
+    });
+
+    return 'Raw Material Imported Succesfully';
   }
 }

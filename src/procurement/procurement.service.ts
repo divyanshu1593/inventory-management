@@ -12,6 +12,7 @@ import { RawMaterialImport } from 'src/database/entities/raw-material-import.ent
 import { RawMaterialImportDto } from './dto/raw-material-import.req.dto';
 import { MachineImportDto } from './dto/machine-import.req.dto';
 import { MachineImport } from 'src/database/entities/machine-import.entity';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ProcurementService {
@@ -40,9 +41,12 @@ export class ProcurementService {
     });
   }
 
-  async getRawMaterials(q: string) {
+  async getRawMaterials(q: string, machine: UUID | undefined) {
     return await this.rawMaterialRepo.find({
       where: {
+        consumed_by: {
+          id: machine,
+        },
         name: Like(`%${q}%`),
       },
     });

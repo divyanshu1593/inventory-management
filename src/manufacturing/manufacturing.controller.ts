@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ProductDto } from './dto/product-info.dto';
 import { ManufacturingService } from './manufacturing.service';
 import { ManufactureProductDto } from './dto/manufacture-product.dto';
@@ -33,6 +33,13 @@ export class ManufacturingController {
   @AllowAllRoles()
   getAllProducts() {
     return this.manufacturingService.getAllProducts();
+  }
+
+  @Get('search-products')
+  @AllowAllDept()
+  @AllowAllRoles()
+  searchProducts(@Query('q') q: string = '') {
+    return this.manufacturingService.searchProducts(q);
   }
 
   @Get('manufactured-product')

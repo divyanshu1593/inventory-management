@@ -8,6 +8,7 @@ import { AllowAllRoles, AllowRoles } from 'src/guards/roles.guard';
 import { UserRole } from 'src/database/entities/user.roles';
 import { AllowAllDept, AllowDept } from 'src/guards/department.guard';
 import { CompanyDepartment } from 'src/database/entities/company-departments';
+import { UUID } from 'crypto';
 
 @Controller('procurement')
 @AllowDept(CompanyDepartment.PROCUREMENT)
@@ -31,8 +32,11 @@ export class ProcurementController {
   @Get('/raw-materials')
   @AllowAllDept()
   @AllowAllRoles()
-  async getRawMaterials(@Query('q') q: string = '') {
-    return await this.procurementService.getRawMaterials(q);
+  async getRawMaterials(
+    @Query('q') q: string = '',
+    @Query('machine') machine?: UUID,
+  ) {
+    return await this.procurementService.getRawMaterials(q, machine);
   }
 
   @Get('/raw-material-imports')

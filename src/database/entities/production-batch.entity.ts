@@ -1,5 +1,6 @@
 import { UUID } from 'crypto';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -14,6 +15,9 @@ export class ProductionBatch {
 
   @CreateDateColumn()
   date: Date;
+
+  @Column()
+  amount: number;
 
   @ManyToOne(() => Product, { nullable: false })
   product: Product;

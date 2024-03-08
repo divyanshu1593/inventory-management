@@ -15,7 +15,7 @@ export class ManufacturingService {
   constructor(private readonly dataSource: DataSource) {}
 
   async manufactureProduct(manufactureProductDto: ManufactureProductDto) {
-    const { machineId, productId, rawMaterialQuantityArray } =
+    const { machineId, productId, rawMaterialQuantityArray, productAmount } =
       manufactureProductDto;
 
     return await this.dataSource.transaction(
@@ -44,6 +44,7 @@ export class ManufacturingService {
           ProductionBatch,
           {
             product: { id: productId },
+            amount: productAmount,
           },
         );
 
@@ -53,6 +54,15 @@ export class ManufacturingService {
               'product does not satisfy foreign key constraint',
             );
           })
+          .execute();
+
+        await transactionalEntityManager
+          .createQueryBuilder(Product, 'product')
+          .update()
+          .set({
+            amount: () => `amount + ${productAmount}`,
+          })
+          .where('product.id = :productId', { productId })
           .execute();
 
         await tryWith(
@@ -70,7 +80,7 @@ export class ManufacturingService {
         )
           .onError(
             () => true,
-            () => new NotAcceptableException('raw material not available'),
+            () => new NotAcceptableException('raw material is out of stock'),
           )
           .execute();
 

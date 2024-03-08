@@ -2,9 +2,10 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsUUID,
+  Min,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { RawMaterialQuantityDto } from './raw-material-quantity.dto';
 import { UUID } from 'crypto';
 import { ArrayClassUnique } from 'src/core/decorators/array-unique.decorator';
@@ -22,4 +23,8 @@ export class ManufactureProductDto {
   @ValidateNested()
   @Type(() => RawMaterialQuantityDto)
   rawMaterialQuantityArray: RawMaterialQuantityDto[];
+
+  @Min(1)
+  @Transform(({ value }) => +value)
+  productAmount: number;
 }

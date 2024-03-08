@@ -87,11 +87,11 @@ export class ManufacturingService {
 
   async searchProducts(q: string) {
     return await this.dataSource.manager.getRepository(Product).find({
-      where: {
-        name: Like(`%${q}%`),
-        model: Like(`%${q}%`),
-        variant: Like(`%${q}%`),
-      },
+      where: [
+        { name: Like(`%${q}%`) },
+        { model: Like(`%${q}%`) },
+        { variant: Like(`%${q}%`) },
+      ],
     });
   }
 

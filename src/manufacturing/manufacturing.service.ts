@@ -1,6 +1,6 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { ProductDto } from './dto/product-info.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, Like } from 'typeorm';
 import { Product } from 'src/database/entities/product.entity';
 import { ManufactureProductDto } from './dto/manufacture-product.dto';
 import { ProductionBatch } from 'src/database/entities/production-batch.entity';
@@ -83,6 +83,16 @@ export class ManufacturingService {
 
   async getAllProducts() {
     return await this.dataSource.manager.find(Product);
+  }
+
+  async searchProducts(q: string) {
+    return await this.dataSource.manager.getRepository(Product).find({
+      where: [
+        { name: Like(`%${q}%`) },
+        { model: Like(`%${q}%`) },
+        { variant: Like(`%${q}%`) },
+      ],
+    });
   }
 
   async getManufacturedProductInfo() {

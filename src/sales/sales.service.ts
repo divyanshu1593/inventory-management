@@ -1,15 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSalesDto } from './dto/create-sales.dto';
-import { LessThanOrEqual, type Repository } from 'typeorm';
+import { LessThanOrEqual, DataSource, type Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductSale } from 'src/database/entities/product-sale.entity';
 import { UUID } from 'crypto';
 import { tryWith } from 'src/database/error-handling/error-handler.adapter';
 import { EntityNotFoundHandler } from 'src/database/error-handling/handlers/entity-not-found.handler';
+import { Product } from 'src/database/entities/product.entity';
 
 @Injectable()
 export class SalesService {
   constructor(
+    @Inject(DataSource) private readonly dataSource: DataSource,
+
     @InjectRepository(ProductSale)
     private readonly salesRepo: Repository<ProductSale>,
   ) {}
@@ -17,13 +25,32 @@ export class SalesService {
   async createSale(createSalesDto: CreateSalesDto) {
     const { product_id, count, to, total_cost } = createSalesDto;
 
-    const sale = this.salesRepo.create({
-      product: { id: product_id },
-      count,
-      to,
-      total_cost,
-    });
-    return await this.salesRepo.save(sale);
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        const sale = transactionalEntityManager.create(ProductSale, {
+          product: { id: product_id },
+          count,
+          to,
+          total_cost,
+        });
+        const result = await transactionalEntityManager.save(sale);
+
+        const affected = await transactionalEntityManager
+          .createQueryBuilder()
+          .update(Product)
+          .where({ id: product_id })
+          .andWhere('amount - :count > 0')
+          .set({ amount: () => 'amount - :count' })
+          .setParameter('count', count)
+          .execute();
+
+        if (affected.affected == 0) {
+          throw new NotAcceptableException('Not Enough Product Available');
+        }
+
+        return result;
+      },
+    );
   }
 
   async getSales() {

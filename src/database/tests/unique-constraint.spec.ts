@@ -3,7 +3,7 @@ import { DatabaseTestModule } from '../database.test.module';
 import { DatabaseModule } from '../database.module';
 import { Product } from '../entities/product.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { ProductCategory } from '../entities/product.category';
 import { Machine } from '../entities/machine.entity';
 import { RawMaterial } from '../entities/raw-material.entity';
@@ -22,8 +22,22 @@ describe(`Must adhere to unique constraints`, () => {
 
   // Machine
   it(`Should fail on adding two machines with same name`, async () => {
-    const mockMachine = {
+    const productRepo = moduleRef.get<Repository<Product>>(
+      getRepositoryToken(Product),
+    );
+    const mockProduct = productRepo.create({
+      amount: 10,
+      model: 'model',
+      name: 'mock',
+      price: 1000,
+      variant: 'vcariant',
+      category: ProductCategory.APPLIANCES,
+    });
+    await productRepo.save(mockProduct);
+
+    const mockMachine: DeepPartial<Machine> = {
       name: 'water',
+      makes: { id: mockProduct.id },
     };
 
     const machineRepo: Repository<Machine> = moduleRef.get(
@@ -38,6 +52,22 @@ describe(`Must adhere to unique constraints`, () => {
 
     expect(machineRepo.save(water_copy)).rejects.toThrow();
     expect(await machineRepo.count()).toBe(1);
+  });
+
+  it(`Should fail on adding machine with non existing product`, async () => {
+    const mockMachine: DeepPartial<Machine> = {
+      name: 'water',
+      makes: { id: 'this-product-does-not-exist' },
+    };
+
+    const machineRepo: Repository<Machine> = moduleRef.get(
+      getRepositoryToken(Machine),
+    );
+
+    const water = machineRepo.create(mockMachine);
+    expect(machineRepo.save(water)).rejects.toThrow(
+      'SQLITE_CONSTRAINT: FOREIGN KEY constraint failed',
+    );
   });
 
   // Product

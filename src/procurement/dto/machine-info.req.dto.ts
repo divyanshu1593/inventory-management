@@ -19,6 +19,9 @@ export class MachineInfoDto {
   @IsArray()
   @ArrayNotEmpty()
   consumes: UniqueIdentifiableEntity[];
+
+  @IsUUID()
+  makes: UUID;
 }
 
 export class UniqueIdentifiableEntity {

@@ -5,6 +5,7 @@ import { BaseSeeder } from '../base-seeder';
 import { SeedUtils } from '../seed-utils';
 import { Machine } from 'src/database/entities/machine.entity';
 import { RawMaterial } from 'src/database/entities/raw-material.entity';
+import { Product } from 'src/database/entities/product.entity';
 
 @Injectable()
 export class MachineSeeder extends BaseSeeder<Machine> {
@@ -14,6 +15,9 @@ export class MachineSeeder extends BaseSeeder<Machine> {
 
     @InjectRepository(RawMaterial)
     private readonly rawMaterialRepo: Repository<RawMaterial>,
+
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>,
   ) {
     super(machineRepo);
   }
@@ -27,10 +31,15 @@ export class MachineSeeder extends BaseSeeder<Machine> {
   }
 
   async generate(index: number): Promise<DeepPartial<Machine>[]> {
+    const randomProduct = await SeedUtils.getRandomEntryFromRepo(
+      this.productRepo,
+    );
+
     return [
       {
         consumes: await this.getRandomRawMaterials(),
         name: `machine_${index}`,
+        makes: randomProduct,
       },
     ];
   }

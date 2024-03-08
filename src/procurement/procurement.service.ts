@@ -66,13 +66,18 @@ export class ProcurementService {
     const createdMachine = this.machineRepo.create({
       name: machineInfoDto.name,
       consumes: machineInfoDto.consumes,
+      makes: {
+        id: machineInfoDto.makes,
+      },
     });
 
     return tryWith(this.machineRepo.save(createdMachine))
       .onError(
         SqliteForeignConstraint,
         () =>
-          new BadRequestException('Specified raw materials are not available'),
+          new BadRequestException(
+            'Specified product or raw-material is not available',
+          ),
       )
       .onError(
         SqliteUniqueConstraint,

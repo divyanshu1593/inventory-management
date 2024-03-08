@@ -4,9 +4,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RawMaterial } from './raw-material.entity';
+import { Product } from './product.entity';
 
 @Entity()
 export class Machine {
@@ -21,4 +23,7 @@ export class Machine {
   })
   @JoinTable()
   consumes: RawMaterial[];
+
+  @ManyToOne(() => Product, { nullable: false })
+  makes: Product;
 }

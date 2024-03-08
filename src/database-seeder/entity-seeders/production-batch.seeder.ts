@@ -19,9 +19,11 @@ export class ProductionBatchSeeder extends BaseSeeder<ProductionBatch> {
   }
 
   async generate(_index: number): Promise<DeepPartial<ProductionBatch>[]> {
+    const randomAmount = SeedUtils.randomIntFromInterval(10, 100);
     return [
       {
         product: await SeedUtils.getRandomEntryFromRepo(this.productRepo),
+        amount: randomAmount,
       },
     ];
   }

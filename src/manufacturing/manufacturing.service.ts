@@ -1,4 +1,8 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { ProductDto } from './dto/product-info.dto';
 import { DataSource, Like } from 'typeorm';
 import { Product } from 'src/database/entities/product.entity';
@@ -8,14 +12,15 @@ import { MachineConsumption } from 'src/database/entities/machine-consumption.en
 import { tryWith } from 'src/database/error-handling/error-handler.adapter';
 import { SqliteForeignConstraint } from 'src/database/error-handling/handlers/foreign-key-constraint.handler';
 import { SqliteUniqueConstraint } from 'src/database/error-handling/handlers/unique-constraint.handler';
-import { RawMaterial } from 'src/database/entities/raw-material.entity';
+import { Machine } from 'src/database/entities/machine.entity';
+import { EntityNotFoundHandler } from 'src/database/error-handling/handlers/entity-not-found.handler';
 
 @Injectable()
 export class ManufacturingService {
   constructor(private readonly dataSource: DataSource) {}
 
   async manufactureProduct(manufactureProductDto: ManufactureProductDto) {
-    const { machineId, productId, rawMaterialQuantityArray } =
+    const { machineId, productId, rawMaterialQuantityArray, productAmount } =
       manufactureProductDto;
 
     return await this.dataSource.transaction(
@@ -24,26 +29,36 @@ export class ManufacturingService {
           (x) => x.rawMaterialId,
         );
 
-        const consumables = await transactionalEntityManager
-          .createQueryBuilder(RawMaterial, 'raw_material')
-          .innerJoinAndSelect(
-            'raw_material.consumed_by',
-            'machine',
-            'machine.id = :machineId and raw_material.id in (:...rawMaterialIds)',
-            { machineId, rawMaterialIds },
+        const machineInfo = await tryWith(
+          this.dataSource.getRepository(Machine).findOneOrFail({
+            where: {
+              id: machineId,
+              makes: {
+                id: productId,
+              },
+            },
+            relations: {
+              consumes: true,
+              makes: true,
+            },
+          }),
+        )
+          .onError(
+            EntityNotFoundHandler,
+            () =>
+              new BadRequestException(
+                'No Such Machine with ID and Raw Materials found.',
+              ),
           )
-          .getCount();
+          .execute();
 
-        if (consumables != rawMaterialIds.length) {
-          throw new NotAcceptableException(
-            'some raw material cant be combined with provided machine',
-          );
-        }
+        // TODO: check for all the raw materials using MachineInfo
 
         const productionBatch = transactionalEntityManager.create(
           ProductionBatch,
           {
             product: { id: productId },
+            amount: productAmount,
           },
         );
 
@@ -53,6 +68,35 @@ export class ManufacturingService {
               'product does not satisfy foreign key constraint',
             );
           })
+          .execute();
+
+        await transactionalEntityManager
+          .createQueryBuilder(Product, 'product')
+          .update()
+          .set({
+            amount: () => `amount + :productAmount`,
+          })
+          .setParameter('productAmount', productAmount)
+          .where('product.id = :productId', { productId })
+          .execute();
+
+        await tryWith(
+          transactionalEntityManager.query(
+            `UPDATE raw_material
+          SET amount = CASE
+          ${rawMaterialQuantityArray
+            .map((rawMaterialInfo) => {
+              return `WHEN id = '${rawMaterialInfo.rawMaterialId}' AND amount - ${rawMaterialInfo.amount} > 0 THEN amount - ${rawMaterialInfo.amount}`;
+            })
+            .join(' ')}
+          END
+          WHERE id in (${rawMaterialIds.map((x) => `'${x}'`).join()})`,
+          ),
+        )
+          .onError(
+            () => true,
+            () => new NotAcceptableException('raw material is out of stock'),
+          )
           .execute();
 
         const mapped = rawMaterialQuantityArray.map((rm) =>

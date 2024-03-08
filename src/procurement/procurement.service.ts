@@ -37,6 +37,7 @@ export class ProcurementService {
     return await this.machineRepo.find({
       relations: {
         consumes: true,
+        makes: true,
       },
       where: {
         name: Like(`%${q}%`),
@@ -74,13 +75,18 @@ export class ProcurementService {
       name: machineInfoDto.name,
       consumes: machineInfoDto.consumes,
       count: 0,
+      makes: {
+        id: machineInfoDto.makes,
+      },
     });
 
     return await tryWith(this.machineRepo.save(createdMachine))
       .onError(
         SqliteForeignConstraint,
         () =>
-          new BadRequestException('Specified raw materials are not available'),
+          new BadRequestException(
+            'Specified product or raw-material is not available',
+          ),
       )
       .onError(
         SqliteUniqueConstraint,

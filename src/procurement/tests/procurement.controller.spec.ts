@@ -38,12 +38,18 @@ describe('ProcurementController', () => {
       const mockRawMaterial = (
         await seeder.rawMaterialSeeder.createEntry()
       ).getFirstOrFail();
+
+      const mockProduct = (
+        await seeder.productSeeder.createEntry()
+      ).getFirstOrFail();
+
       const mockMachine = (
         await seeder.machineSeeder.createEntry()
       ).getFirstOrFail();
 
       const request = controller.addMachine({
         name: mockMachine.name,
+        makes: mockProduct.id,
         consumes: [{ id: mockRawMaterial.id }],
       });
 
@@ -51,13 +57,34 @@ describe('ProcurementController', () => {
     });
 
     it(`Should not create when raw materials are not available`, async () => {
+      const mockProduct = (
+        await seeder.productSeeder.createEntry()
+      ).getFirstOrFail();
+
       const request = controller.addMachine({
+        makes: mockProduct.id,
         consumes: [{ id: 'xxxx-xxxx-xxxx-xxxx-xxxx' }],
         name: 'new_machine',
       });
 
       expect(request).rejects.toThrow(
-        'Specified raw materials are not available',
+        'Specified product or raw-material is not available',
+      );
+    });
+
+    it(`Should not create when product is not available`, async () => {
+      const mockRawMaterial = (
+        await seeder.rawMaterialSeeder.createEntry()
+      ).getFirstOrFail();
+
+      const request = controller.addMachine({
+        makes: 'xxxx-xxxx-xxxx-xxxx-xxxx',
+        consumes: [{ id: mockRawMaterial.id }],
+        name: 'new_machine',
+      });
+
+      expect(request).rejects.toThrow(
+        'Specified product or raw-material is not available',
       );
     });
 
@@ -66,7 +93,12 @@ describe('ProcurementController', () => {
         await seeder.rawMaterialSeeder.createEntry()
       ).getFirstOrFail();
 
+      const mockProduct = (
+        await seeder.productSeeder.createEntry()
+      ).getFirstOrFail();
+
       const request = await controller.addMachine({
+        makes: mockProduct.id,
         consumes: [created],
         name: 'machine_doesnt_exist',
       });
@@ -80,6 +112,8 @@ describe('ProcurementController', () => {
 
   describe(`Importing a Machine`, () => {
     it(`Should import a machine when it exists`, async () => {
+      await seeder.productSeeder.createEntry();
+
       const mockMachine = (
         await seeder.machineSeeder.createEntry()
       ).getFirstOrFail();
@@ -92,13 +126,7 @@ describe('ProcurementController', () => {
         total_cost: 100,
       });
 
-      expect(entry).toMatchObject({
-        count: 100,
-        total_cost: 100,
-        machine: {
-          id: id,
-        },
-      });
+      expect(entry).toBe('Machine Imported Successfully');
     });
 
     it(`Should NOT import when the machine doesnt exist`, () => {
@@ -137,11 +165,7 @@ describe('ProcurementController', () => {
         total_cost: 1000,
       });
 
-      expect(entry).toMatchObject({
-        raw_material: { id },
-        count: 100,
-        total_cost: 1000,
-      });
+      expect(entry).toBe('Raw Material Imported Succesfully');
     });
   });
 

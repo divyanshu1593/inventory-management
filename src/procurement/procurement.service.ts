@@ -66,6 +66,7 @@ export class ProcurementService {
     const createdMachine = this.machineRepo.create({
       name: machineInfoDto.name,
       consumes: machineInfoDto.consumes,
+      count: 0,
     });
 
     return tryWith(this.machineRepo.save(createdMachine))

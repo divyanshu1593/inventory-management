@@ -148,7 +148,6 @@ describe('ProcurementController', () => {
   describe(`Raw Material Entry Creation`, () => {
     it(`Should create when it doesnt exist`, async () => {
       const mockData = {
-        amount: 100,
         cost: 100,
         name: 'new_material',
       };

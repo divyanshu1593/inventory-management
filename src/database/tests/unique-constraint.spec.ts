@@ -24,6 +24,7 @@ describe(`Must adhere to unique constraints`, () => {
   it(`Should fail on adding two machines with same name`, async () => {
     const mockMachine = {
       name: 'water',
+      count: 0,
     };
 
     const machineRepo: Repository<Machine> = moduleRef.get(

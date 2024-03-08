@@ -27,10 +27,12 @@ export class MachineSeeder extends BaseSeeder<Machine> {
   }
 
   async generate(index: number): Promise<DeepPartial<Machine>[]> {
+    const randomCount = SeedUtils.randomIntFromInterval(1, 10);
     return [
       {
         consumes: await this.getRandomRawMaterials(),
         name: `machine_${index}`,
+        count: randomCount,
       },
     ];
   }

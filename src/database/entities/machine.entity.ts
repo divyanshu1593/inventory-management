@@ -16,6 +16,9 @@ export class Machine {
   @Column({ unique: true })
   name: string;
 
+  @Column()
+  count: number;
+
   @ManyToMany(() => RawMaterial, (raw_material) => raw_material.consumed_by, {
     nullable: false,
   })

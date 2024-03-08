@@ -33,6 +33,7 @@ export class ProcurementService {
     return await this.machineRepo.find({
       relations: {
         consumes: true,
+        makes: true,
       },
       where: {
         name: Like(`%${q}%`),

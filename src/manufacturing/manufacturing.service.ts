@@ -60,8 +60,9 @@ export class ManufacturingService {
           .createQueryBuilder(Product, 'product')
           .update()
           .set({
-            amount: () => `amount + ${productAmount}`,
+            amount: () => `amount + :productAmount`,
           })
+          .setParameter('productAmount', productAmount)
           .where('product.id = :productId', { productId })
           .execute();
 

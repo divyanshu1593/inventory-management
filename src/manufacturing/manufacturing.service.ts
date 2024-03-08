@@ -55,6 +55,25 @@ export class ManufacturingService {
           })
           .execute();
 
+        await tryWith(
+          transactionalEntityManager.query(
+            `UPDATE raw_material
+          SET amount = CASE
+          ${rawMaterialQuantityArray
+            .map((rawMaterialInfo) => {
+              return `WHEN id = '${rawMaterialInfo.rawMaterialId}' AND amount - ${rawMaterialInfo.amount} > 0 THEN amount - ${rawMaterialInfo.amount}`;
+            })
+            .join('')}
+          END
+          WHERE id in (${rawMaterialIds.map((x) => `'${x}'`).join()})`,
+          ),
+        )
+          .onError(
+            () => true,
+            () => new NotAcceptableException('raw material not available'),
+          )
+          .execute();
+
         const mapped = rawMaterialQuantityArray.map((rm) =>
           transactionalEntityManager.create(MachineConsumption, {
             batch: { id: productionBatch.id },

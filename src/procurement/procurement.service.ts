@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { MachineInfoDto } from './dto/machine-info.req.dto';
 import { Machine } from 'src/database/entities/machine.entity';
 import { tryWith } from 'src/database/error-handling/error-handler.adapter';
@@ -28,6 +28,39 @@ export class ProcurementService {
     @InjectRepository(RawMaterialImport)
     private readonly rawMaterialImportRepo: Repository<RawMaterialImport>,
   ) {}
+
+  async getMachines(q: string) {
+    return await this.machineRepo.find({
+      relations: {
+        consumes: true,
+      },
+      where: {
+        name: Like(`%${q}%`),
+      },
+    });
+  }
+
+  async getRawMaterials(q: string) {
+    return await this.rawMaterialRepo.find({
+      where: {
+        name: Like(`%${q}%`),
+      },
+    });
+  }
+
+  async getRawMaterialImports() {
+    return await this.rawMaterialImportRepo.find({
+      relations: { raw_material: true },
+    });
+  }
+
+  async getAllMachineImports() {
+    return await this.machineImportRepo.find({
+      relations: {
+        machine: true,
+      },
+    });
+  }
 
   async addNewMachine(machineInfoDto: MachineInfoDto) {
     const createdMachine = this.machineRepo.create({

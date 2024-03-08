@@ -1,4 +1,8 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { ProductDto } from './dto/product-info.dto';
 import { DataSource } from 'typeorm';
 import { Product } from 'src/database/entities/product.entity';
@@ -8,7 +12,8 @@ import { MachineConsumption } from 'src/database/entities/machine-consumption.en
 import { tryWith } from 'src/database/error-handling/error-handler.adapter';
 import { SqliteForeignConstraint } from 'src/database/error-handling/handlers/foreign-key-constraint.handler';
 import { SqliteUniqueConstraint } from 'src/database/error-handling/handlers/unique-constraint.handler';
-import { RawMaterial } from 'src/database/entities/raw-material.entity';
+import { Machine } from 'src/database/entities/machine.entity';
+import { EntityNotFoundHandler } from 'src/database/error-handling/handlers/entity-not-found.handler';
 
 @Injectable()
 export class ManufacturingService {
@@ -24,21 +29,30 @@ export class ManufacturingService {
           (x) => x.rawMaterialId,
         );
 
-        const consumables = await transactionalEntityManager
-          .createQueryBuilder(RawMaterial, 'raw_material')
-          .innerJoinAndSelect(
-            'raw_material.consumed_by',
-            'machine',
-            'machine.id = :machineId and raw_material.id in (:...rawMaterialIds)',
-            { machineId, rawMaterialIds },
+        const machineInfo = await tryWith(
+          this.dataSource.getRepository(Machine).findOneOrFail({
+            where: {
+              id: machineId,
+              makes: {
+                id: productId,
+              },
+            },
+            relations: {
+              consumes: true,
+              makes: true,
+            },
+          }),
+        )
+          .onError(
+            EntityNotFoundHandler,
+            () =>
+              new BadRequestException(
+                'No Such Machine with ID and Raw Materials found.',
+              ),
           )
-          .getCount();
+          .execute();
 
-        if (consumables != rawMaterialIds.length) {
-          throw new NotAcceptableException(
-            'some raw material cant be combined with provided machine',
-          );
-        }
+        // TODO: check for all the raw materials using MachineInfo
 
         const productionBatch = transactionalEntityManager.create(
           ProductionBatch,

@@ -52,7 +52,26 @@ export class ManufacturingService {
           )
           .execute();
 
-        // TODO: check for all the raw materials using MachineInfo
+        const rawMaterialSet = new Set(
+          machineInfo.consumes.map((rawMaterial) => rawMaterial.id),
+        );
+        let cnt = 0;
+
+        for (const rawMaterialInfo of rawMaterialQuantityArray) {
+          if (rawMaterialSet.has(rawMaterialInfo.rawMaterialId)) {
+            cnt++;
+          } else {
+            throw new NotAcceptableException(
+              `raw material can't be combined with given machine`,
+            );
+          }
+        }
+
+        if (rawMaterialSet.size !== cnt) {
+          throw new NotAcceptableException(
+            'raw materials does not match all consumable raw materials of given machine',
+          );
+        }
 
         const productionBatch = transactionalEntityManager.create(
           ProductionBatch,

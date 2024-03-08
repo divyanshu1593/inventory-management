@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOperator, In, Repository } from 'typeorm';
+import { FindOperator, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.roles';
 import { User } from 'src/database/entities/user.entity';
 import { AuthorityMap } from './authority-maping';
@@ -44,15 +44,24 @@ export class AuthService {
       : In([AuthorityMap.get(role)]);
   }
 
-  async getApprovableRequests(role: UserRole, department: CompanyDepartment) {
+  async getApprovableRequests(
+    role: UserRole,
+    department: CompanyDepartment,
+    q?: string,
+  ) {
     const juniorRole = this.getJuniorRole(role);
 
     const _dept = role === UserRole.ADMIN ? null : department;
+
+    const searchQuery: FindOptionsWhere<User> = !q
+      ? {}
+      : { email: Like(`%${q}%`) };
 
     return await this.userRepo.findBy({
       role: juniorRole,
       department: _dept,
       is_approved: false,
+      ...searchQuery,
     });
   }
 

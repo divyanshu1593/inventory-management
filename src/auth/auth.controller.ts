@@ -5,8 +5,8 @@ import {
   Req,
   UseGuards,
   Get,
-  Put,
   Res,
+  Query,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AllowUnauthorized } from 'src/guards/allow-unauthorized';
@@ -32,16 +32,17 @@ export class AuthController {
   @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
   @AllowAllDept()
   @Get('signup/get-approvable-requests')
-  async getApprovableRequests(@Req() req: Request) {
+  async getApprovableRequests(@Req() req: Request, @Query('q') q?: string) {
     return await this.authService.getApprovableRequests(
       req.user.role,
       req.user.department,
+      q,
     );
   }
 
   @AllowRoles(UserRole.ADMIN, UserRole.DEPARTMENT_HEAD, UserRole.MANAGER)
   @AllowAllDept()
-  @Put('signup/approve-requests')
+  @Post('signup/approve-requests')
   async approveRequests(
     @Req() req: Request,
     @Body() userEmailArray: userEmailArrayDto,

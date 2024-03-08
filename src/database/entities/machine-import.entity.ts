@@ -22,6 +22,6 @@ export class MachineImport {
   @CreateDateColumn()
   date: Date;
 
-  @Column()
+  @Column({ type: 'real' })
   total_cost: number;
 }

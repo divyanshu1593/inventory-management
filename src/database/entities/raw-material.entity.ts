@@ -10,7 +10,7 @@ export class RawMaterial {
   @Column({ unique: true })
   name: string;
 
-  @Column()
+  @Column({ type: 'real' })
   cost: number;
 
   @Column()

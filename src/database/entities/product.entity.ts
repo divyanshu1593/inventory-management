@@ -11,7 +11,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'real' })
   price: number;
 
   @Column({ type: 'simple-enum' })
